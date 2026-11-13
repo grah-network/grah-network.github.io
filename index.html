@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GRAH! — Groupe de Recherche artistique et d'Action sur l'Hospitalité</title>
+<meta name="description" content="Collectif d'artistes et de chercheur·ses né à Nîmes en 2023, association loi 1901 depuis 2026. Atelier partagé, résidences, ateliers de création et actions autour de l'hospitalité.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="canonical" href="https://grah-network.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GRAH! — Groupe de Recherche artistique et d'Action sur l'Hospitalité">
+<meta property="og:description" content="Collectif d'artistes et de chercheur·ses à Nîmes. Atelier partagé, résidences, ateliers de création et actions autour de l'hospitalité.">
+<meta property="og:url" content="https://grah-network.com/">
+<meta property="og:image" content="https://grah-network.com/og-image.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+@font-face { font-family: 'Archivo'; font-weight: 400; font-display: swap; src: url(fonts/archivo-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 500; font-display: swap; src: url(fonts/archivo-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 700; font-display: swap; src: url(fonts/archivo-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 800; font-display: swap; src: url(fonts/archivo-latin-800-normal.woff2) format('woff2'); }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #000;
+  --paper: #fff;
+  --soft: #F2F2F0;
+  --grey: #5E5E5B;
+  --hair: #D6D6D2;
+  --yellow: #FFE800;
+  --pink: #FF48B0;
+  --aqua: #5EC8E5;
+  --r: 10px;
+  --wrap: 1120px;
+  --gut: clamp(16px, 4vw, 40px);
+  --font: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gut); }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 12px; top: 12px; background: var(--yellow); padding: 8px 12px; z-index: 99; }
+
+/* Surligneur (comme les montants de l'app) */
+.mark { background-image: linear-gradient(transparent 55%, var(--hl, var(--yellow)) 55%, var(--hl, var(--yellow)) 92%, transparent 92%); padding: 0 .08em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.mark.pink { --hl: var(--pink); }
+.mark.aqua { --hl: var(--aqua); }
+
+/* En-tête */
+.top { position: sticky; top: 0; z-index: 20; background: var(--paper); border-bottom: 2px solid var(--ink); }
+.top .wrap { display: flex; align-items: center; gap: 20px; min-height: 64px; }
+.top .brand { display: block; line-height: 0; flex-shrink: 0; }
+.top .brand svg { height: 36px; width: auto; }
+.top nav { margin-left: auto; min-width: 0; }
+.menu { display: flex; gap: 2px; list-style: none; }
+.menu a { display: block; text-decoration: none; font-weight: 600; font-size: 15px; padding: 8px 12px; border-radius: 6px; white-space: nowrap; }
+.menu a:hover { background: var(--soft); }
+.menu a.cta { background: var(--ink); color: var(--paper); margin-left: 6px; }
+.menu a.cta:hover { background: #222; }
+
+/* Boutons inclinés : la seule reprise de l'inclinaison du logo */
+.btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.btn { display: inline-block; text-decoration: none; border: 2.5px solid var(--ink); border-radius: 6px; padding: 12px 24px; transform: skewX(-9deg); background: var(--paper); font-weight: 800; font-size: 17px; transition: transform .12s, box-shadow .12s; cursor: pointer; }
+.btn > span { display: inline-block; transform: skewX(9deg); }
+.btn:hover { box-shadow: 4px 4px 0 var(--ink); transform: skewX(-9deg) translate(-2px,-2px); }
+.btn.yellow { background: var(--yellow); }
+.btn.pink { background: var(--pink); }
+.btn.aqua { background: var(--aqua); }
+.btn.black { background: var(--ink); color: var(--paper); }
+
+/* Accueil */
+.hero { padding: clamp(40px, 8vw, 96px) 0 clamp(48px, 8vw, 96px); border-bottom: 2px solid var(--ink); }
+.hero .wrap { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+.kicker { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 18px; }
+.hero h1 { font-size: clamp(34px, 5.4vw, 64px); line-height: 1.04; font-weight: 800; letter-spacing: -0.025em; }
+.hero h1 .mark { padding: 0; }
+.hero p.lead { font-size: clamp(18px, 1.8vw, 21px); margin-top: 22px; max-width: 34em; }
+.hero-logo { position: relative; }
+.hero-logo::before { content: ""; position: absolute; inset: 12% 2% 10% 8%; background: var(--yellow); transform: skewX(-9deg) rotate(-3deg); border-radius: 8px; }
+.hero-logo svg { position: relative; width: 100%; height: auto; display: block; }
+
+/* Sections */
+section.block { padding: clamp(56px, 8vw, 104px) 0; border-bottom: 2px solid var(--ink); }
+section.block.soft { background: var(--soft); }
+.sec-head { display: grid; grid-template-columns: 220px 1fr; gap: 32px; margin-bottom: 40px; }
+.sec-num { font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding-top: 10px; }
+.sec-head h2 { font-size: clamp(30px, 4vw, 46px); line-height: 1.08; font-weight: 800; letter-spacing: -0.02em; }
+.sec-head p { font-size: 19px; margin-top: 14px; max-width: 40em; }
+.sec-body { margin-left: 252px; }
+.prose p + p { margin-top: 14px; }
+.prose { max-width: 42em; }
+
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); border: 2px solid var(--ink); border-radius: var(--r); margin-top: 36px; overflow: hidden; background: var(--paper); }
+.fact { padding: 18px 20px 20px; }
+.fact + .fact { border-left: 2px solid var(--ink); }
+.fact strong { display: block; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.fact span { display: block; font-size: 15px; color: var(--grey); margin-top: 6px; }
+
+.ways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; list-style: none; }
+.ways li { border-top: 2px solid var(--ink); padding-top: 12px; font-size: 16px; }
+.ways li b { display: block; font-size: 18px; margin-bottom: 4px; }
+
+/* Activités */
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.card { border: 2.5px solid var(--ink); border-radius: var(--r); padding: 24px 24px 26px; background: var(--paper); }
+.card h3 { font-size: 24px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.15; margin-bottom: 10px; }
+.card p { font-size: 16px; }
+.tag { display: inline-block; font-size: 12.5px; font-weight: 700; letter-spacing: .03em; border: 2px solid var(--ink); border-radius: 999px; padding: 2px 10px; margin-bottom: 14px; }
+.tag.open { background: var(--yellow); }
+.tag.members { background: var(--aqua); }
+.tag.res { background: var(--pink); }
+.also { margin-top: 26px; font-size: 16px; }
+
+/* Tableau Participer */
+.table-wrap { border: 2.5px solid var(--ink); border-radius: var(--r); overflow: hidden; background: var(--paper); }
+table.adv { width: 100%; border-collapse: collapse; font-size: 16px; }
+table.adv th, table.adv td { padding: 12px 16px; text-align: left; vertical-align: middle; }
+table.adv thead th { font-size: 14px; font-weight: 800; border-bottom: 2.5px solid var(--ink); background: var(--paper); }
+table.adv thead th.c { text-align: center; width: 130px; }
+table.adv td.c { text-align: center; width: 130px; }
+table.adv tbody tr + tr td { border-top: 1px solid var(--hair); }
+table.adv tr.group td { background: var(--soft); font-weight: 800; font-size: 14px; letter-spacing: .03em; text-transform: uppercase; border-top: 2px solid var(--ink); }
+table.adv tr.group:first-child td { border-top: none; }
+.dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--ink); vertical-align: middle; }
+.dash { color: var(--grey); }
+.note { font-size: 14.5px; color: var(--grey); margin-top: 14px; max-width: 46em; }
+
+/* Adhérer */
+.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.tier { border: 2.5px solid var(--ink); border-radius: var(--r); padding: 22px 22px 24px; background: var(--paper); display: flex; flex-direction: column; }
+.tier h3 { font-size: 21px; font-weight: 800; }
+.tier .price { font-size: 40px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin: 12px 0 2px; }
+.tier .price small { font-size: 16px; font-weight: 600; letter-spacing: 0; }
+.tier .price-sub { font-size: 15px; color: var(--grey); margin-bottom: 14px; }
+.tier p { font-size: 15.5px; }
+.tier p.how { margin-top: auto; padding-top: 14px; font-size: 14px; font-weight: 700; }
+.steps { list-style: none; counter-reset: s; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 36px; }
+.steps li { counter-increment: s; border-top: 2px solid var(--ink); padding-top: 14px; font-size: 16px; }
+.steps li::before { content: counter(s); display: inline-grid; place-items: center; width: 32px; height: 32px; border: 2px solid var(--ink); border-radius: 50%; font-weight: 800; margin-bottom: 10px; background: var(--yellow); }
+.steps li b { display: block; font-size: 18px; margin-bottom: 4px; }
+.rules { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.rule { background: var(--soft); border-radius: var(--r); padding: 18px 20px; font-size: 15.5px; }
+.rule b { display: block; margin-bottom: 4px; }
+.soft .rule { background: var(--paper); border: 2px solid var(--ink); }
+
+/* Hébergement */
+.host { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px; }
+.host .rule { background: var(--paper); border: 2px solid var(--ink); }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 18px; }
+.contact a.big, .contact .big { display: block; font-size: clamp(17px, 1.6vw, 21px); font-weight: 800; letter-spacing: -0.01em; text-decoration: none; overflow-wrap: anywhere; }
+.contact a.big:hover { text-decoration: underline; text-underline-offset: 4px; }
+.contact .label { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--grey); margin-bottom: 6px; }
+.contact > div { border-top: 2px solid var(--ink); padding-top: 14px; }
+.news { margin-top: 40px; border: 2.5px solid var(--ink); border-radius: var(--r); padding: 22px 24px; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--paper); }
+.news p { font-size: 16px; max-width: 36em; }
+.news b { font-size: 19px; display: block; margin-bottom: 2px; }
+
+/* Pied de page */
+footer { padding: 48px 0 calc(40px + env(safe-area-inset-bottom)); font-size: 14.5px; }
+footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 28px; }
+footer h4 { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+footer ul { list-style: none; }
+footer li + li { margin-top: 4px; }
+footer .logo-sm svg { height: 30px; width: auto; margin-bottom: 12px; }
+footer .muted { color: var(--grey); }
+details.legal { margin-top: 32px; border-top: 1px solid var(--hair); padding-top: 16px; }
+details.legal summary { cursor: pointer; font-weight: 700; }
+details.legal div { margin-top: 10px; color: var(--grey); max-width: 52em; }
+details.legal p + p { margin-top: 8px; }
+
+/* Tablette */
+@media (max-width: 960px) {
+  .sec-head { grid-template-columns: 1fr; gap: 8px; }
+  .sec-num { padding-top: 0; }
+  .sec-body { margin-left: 0; }
+  .tiers, .contact { grid-template-columns: 1fr 1fr; }
+  footer .cols { grid-template-columns: 1fr 1fr; }
+}
+/* En-tête compact */
+@media (max-width: 920px) {
+  .top .wrap { flex-wrap: wrap; gap: 0; min-height: 0; padding-top: 10px; }
+  .top .brand svg { height: 30px; }
+  .top nav { flex: 0 0 100%; min-width: 0; margin: 4px calc(var(--gut) * -1) 0; }
+  .menu { margin: 0; padding: 0 calc(var(--gut) - 10px) 8px; overflow-x: auto; scrollbar-width: none; }
+  .menu::-webkit-scrollbar { display: none; }
+  .menu a { font-size: 14px; padding: 6px 10px; }
+  html { scroll-padding-top: 100px; }
+}
+/* Téléphone */
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .hero .wrap { grid-template-columns: 1fr; }
+  .hero-logo { order: -1; max-width: 340px; }
+  .facts, .ways, .cards, .tiers, .steps, .rules, .host, .contact { grid-template-columns: 1fr; }
+  .fact + .fact { border-left: none; border-top: 2px solid var(--ink); }
+  table.adv { font-size: 14.5px; }
+  table.adv th, table.adv td { padding: 10px 8px; }
+  table.adv thead th { font-size: 10.5px; line-height: 1.2; }
+  table.adv thead th.c, table.adv td.c { width: 46px; padding-left: 2px; padding-right: 2px; }
+  table.adv thead th .long { display: none; }
+  table.adv td:first-child, table.adv th:first-child { padding-left: 14px; }
+  .dot { width: 12px; height: 12px; }
+  footer .cols { grid-template-columns: 1fr; }
+  .btn { font-size: 16px; padding: 11px 20px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+@media print { .top { position: static; } .btn:hover { box-shadow: none; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="GRAH! — accueil"><svg viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></a>
+    <nav aria-label="Navigation principale">
+      <ul class="menu">
+        <li><a href="#qui">Qui sommes-nous</a></li>
+        <li><a href="#activites">Activités</a></li>
+        <li><a href="#participer">Participer</a></li>
+        <li><a href="#hebergement">Hébergement solidaire</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a class="cta" href="#adherer">Adhérer</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu">
+
+<!-- ACCUEIL -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <p class="kicker">Nîmes · association loi 1901</p>
+      <h1>Groupe de Recherche artistique et d'Action sur l'<span class="mark">Hospitalité</span></h1>
+      <p class="lead">Un collectif d'artistes et de chercheur·ses qui pense et pratique l'hospitalité, avec les habitant·es, les personnes migrantes et les structures du territoire.</p>
+      <div class="btns">
+        <a class="btn yellow" href="#participer"><span>Participer</span></a>
+        <a class="btn" href="#adherer"><span>Adhérer</span></a>
+      </div>
+    </div>
+    <div class="hero-logo" aria-hidden="true"><svg viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></div>
+  </div>
+</section>
+
+<!-- QUI SOMMES-NOUS -->
+<section class="block" id="qui">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-num">01 — À propos</p>
+      <div>
+        <h2>Penser et pratiquer l'hospitalité, ensemble</h2>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="prose">
+        <p>Le GRAH est un collectif d'artistes et de chercheur·ses né à Nîmes en 2023, déclaré en association loi 1901 en mars 2026. Il explore la notion d'hospitalité dans ses dimensions <span class="mark">sociales, urbaines, environnementales et esthétiques</span>, en collaboration avec les structures du territoire.</p>
+        <p>Il travaille depuis les quartiers de Pissevin-Valdegour et de Saint-Césaire, en lien avec les structures culturelles, éducatives et sociales.</p>
+      </div>
+      <ul class="ways">
+        <li><b>Un atelier partagé</b>Un espace de travail commun pour des artistes, des chercheur·ses et des acteur·ices culturel·les.</li>
+        <li><b>Des lieux vacants activés</b>Nous ouvrons temporairement des espaces vides de la ville à la création.</li>
+        <li><b>Création et médiation</b>Des actions qui réunissent personnes migrantes et habitant·es.</li>
+      </ul>
+      <div class="facts">
+        <div class="fact"><strong>2023</strong><span>naissance du collectif à Nîmes</span></div>
+        <div class="fact"><strong>2026</strong><span>déclaration en association loi 1901</span></div>
+        <div class="fact"><strong>2 quartiers</strong><span>Pissevin-Valdegour et Saint-Césaire</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTIVITÉS -->
+<section class="block soft" id="activites">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-num">02 — Nos activités</p>
+      <div>
+        <h2>Ce que nous faisons</h2>
+        <p>Les ateliers de création, les pique-niques, les vernissages et les open studios sont <span class="mark">ouverts à tous, sans adhésion</span>.</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="cards">
+        <article class="card">
+          <span class="tag res">Résidence</span>
+          <h3>Résidence / Exposition</h3>
+          <p>Accueil d'un·e artiste en résidence de production dans un espace vacant de la ville, suivie d'une exposition in situ.</p>
+        </article>
+        <article class="card">
+          <span class="tag open">Ouvert à tous</span>
+          <h3>Atelier de création</h3>
+          <p>Ateliers ouverts aux habitant·es et aux enfants — sculpture, expression — menés avec les structures du quartier.</p>
+        </article>
+        <article class="card">
+          <span class="tag open">Ouvert à tous</span>
+          <h3>Pique-nique artistique</h3>
+          <p>Visite d'exposition en groupe, suivie d'un repas partagé.</p>
+        </article>
+        <article class="card">
+          <span class="tag members">Membres · étudiant·es en art</span>
+          <h3>Point d'atelier</h3>
+          <p>Rencontres régulières entre artistes autour d'un apéro : chacun·e présente son travail et ses projets en cours.</p>
+        </article>
+      </div>
+      <p class="also">Et aussi : des rencontres, des projections et des événements ponctuels. L'actualité est sur Instagram, <a href="https://www.instagram.com/grah_network/" rel="noopener">@grah_network</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PARTICIPER -->
+<section class="block" id="participer">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-num">03 — Participer</p>
+      <div>
+        <h2>Venez comme vous êtes</h2>
+        <p>Pas besoin d'adhérer pour venir aux ateliers ou aux vernissages. L'adhésion permet de prendre part aux décisions et de rejoindre l'atelier et le réseau.</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="table-wrap">
+        <table class="adv">
+          <thead>
+            <tr>
+              <th scope="col">Ce qui vous est ouvert</th>
+              <th scope="col" class="c">Non-membres</th>
+              <th scope="col" class="c"><span class="long">Membres </span>adhérents</th>
+              <th scope="col" class="c"><span class="long">Membres </span>actifs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group"><td colspan="4">Ouvert à tous</td></tr>
+            <tr><td>Participation aux ateliers de création et aux pique-niques</td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Invitation aux vernissages, open studios et rencontres avec les artistes en résidence</td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Lettre d'information : actualités, appels à projets, résidences et aides</td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr class="group"><td colspan="4">Membres adhérents et actifs</td></tr>
+            <tr><td>Voix délibérative à l'assemblée générale</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Proposition d'idées de projets à l'association</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Accès à l'atelier partagé, outils communs compris</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Point d'atelier et mise en relation avec les structures partenaires</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Mise en relation avec le réseau d'hébergement solidaire, sur demande</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Réduction sur les objets et éditions de l'association</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr class="group"><td colspan="4">Membres actifs</td></tr>
+            <tr><td>Poste de travail individuel dans l'atelier, avec participation aux frais</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Portage de projets au nom du GRAH, sur accord du bureau</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Priorité pour animer les ateliers de l'association, avec rémunération</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Prêt du matériel de l'association pour des travaux ou événements personnels</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Présentation comme artiste membre sur le site, expositions de membres et open studios</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+            <tr><td>Éligibilité au bureau</td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dash" aria-label="non">—</span></td><td class="c"><span class="dot" role="img" aria-label="oui"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Les avantages sont accordés dans la limite des espaces, du matériel et des moyens humains disponibles. Une participation financière peut être demandée pour certains ateliers. Les participant·es mineur·es fournissent une autorisation de leur représentant légal.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ADHÉRER -->
+<section class="block soft" id="adherer">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-num">04 — Adhérer</p>
+      <div>
+        <h2>Rejoindre le GRAH</h2>
+        <p>Adhérer, c'est soutenir une association indépendante, prendre part à ses décisions et rejoindre un atelier et un réseau.</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="tiers">
+        <div class="tier">
+          <h3>Membre adhérent</h3>
+          <p class="price">10 € <small>/ an</small></p>
+          <p class="price-sub">5 € tarif étudiant·e</p>
+          <p>Toute personne qui adhère à l'objet de l'association, participe à ses activités et la soutient.</p>
+        </div>
+        <div class="tier">
+          <h3>Membre actif</h3>
+          <p class="price">10 € <small>/ an</small></p>
+          <p class="price-sub">5 € tarif étudiant·e</p>
+          <p>Membre adhérent qui souhaite un poste de travail dans l'atelier, porte un projet retenu par l'association ou contribue régulièrement à sa vie.</p>
+          <p class="how">Sur demande au bureau</p>
+        </div>
+        <div class="tier">
+          <h3>Membre bienfaiteur</h3>
+          <p class="price">100 € <small>minimum</small></p>
+          <p class="price-sub">par an</p>
+          <p>Personne physique ou morale qui soutient financièrement l'association, sans participer à ses activités. Voix consultative à l'assemblée générale.</p>
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li><b>Le bulletin</b>Remplissez le bulletin d'adhésion, en ligne ou sur papier.</li>
+        <li><b>La cotisation</b>Réglez-la en ligne sur HelloAsso, par virement ou en espèces lors d'un événement (un reçu vous est remis).</li>
+        <li><b>On se rencontre</b>Venez à un prochain Point d'atelier pour faire connaissance.</li>
+      </ol>
+
+      <div class="btns">
+        <a class="btn yellow" id="btn-helloasso" href="https://www.helloasso.com/associations/groupe-de-recherche-artistique-et-d-action-sur-l-hospitalite/adhesions/adhesion-grah-2026-2027" rel="noopener"><span>Adhérer en ligne</span></a>
+        <a class="btn" href="mailto:contact@grah-network.com?subject=Adh%C3%A9sion%20au%20GRAH"><span>Recevoir le bulletin par e-mail</span></a>
+      </div>
+
+      <div class="rules">
+        <div class="rule"><b>L'année d'adhésion</b>Du 1<sup>er</sup> janvier au 31 décembre. Pour une première adhésion à partir du 1<sup>er</sup> septembre, la cotisation vaut jusqu'au 31 décembre de l'année suivante.</div>
+        <div class="rule"><b>Tarif étudiant·e</b>Sur présentation de votre carte d'étudiant·e. Nous n'en gardons aucune copie.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HÉBERGEMENT SOLIDAIRE -->
+<section class="block" id="hebergement">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-num">05 — Hébergement solidaire</p>
+      <div>
+        <h2>Accueillir, avec un réseau partenaire</h2>
+        <p>Le GRAH ne gère pas de réseau d'hébergement. Il y contribue aux côtés d'un réseau partenaire.</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="host">
+        <div class="rule"><b>Pour les membres qui le souhaitent</b>Les membres adhérents et actifs peuvent demander à être mis en relation avec le réseau partenaire. C'est une case facultative du bulletin : l'adhésion n'inscrit personne sur une liste d'hébergeur·ses, et l'accord peut être retiré à tout moment.</div>
+        <div class="rule"><b>Ce que nous gardons</b>Uniquement votre accord de mise en relation et sa date. Aucune information sur les hébergements ni sur les personnes hébergées n'est conservée par l'association.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="block soft" id="contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-num">06 — Contact</p>
+      <div>
+        <h2>Écrivez-nous, passez nous voir</h2>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="contact">
+        <div>
+          <p class="label">E-mail</p>
+          <a class="big" style="white-space:nowrap" href="mailto:contact@grah-network.com">contact@grah-network.com</a>
+        </div>
+        <div>
+          <p class="label">Instagram</p>
+          <a class="big" href="https://www.instagram.com/grah_network/" rel="noopener">@grah_network</a>
+        </div>
+        <div>
+          <p class="label">Adresse</p>
+          <p class="big">10 Place Avogadro<br>30900 Nîmes</p>
+        </div>
+      </div>
+      <div class="news">
+        <p><b>La lettre d'information</b>Actualités de l'association, appels à projets, résidences et aides. Ouverte à tous, sans adhésion.</p>
+        <a class="btn aqua" href="mailto:contact@grah-network.com?subject=Inscription%20%C3%A0%20la%20lettre%20d%27information"><span>S'inscrire</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <div class="logo-sm" aria-hidden="true"><svg viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></div>
+        <p><b>Groupe de Recherche artistique et d'Action sur l'Hospitalité (GRAH)</b></p>
+        <p class="muted">Association loi 1901 · 10 Place Avogadro, 30900 Nîmes</p>
+        <p class="muted">RNA W302023215 · SIRET 103 759 312 00012</p>
+      </div>
+      <div>
+        <h4>Documents</h4>
+        <ul>
+          <li><a href="docs/GRAH_Statuts.pdf">Statuts (PDF)</a></li>
+          <li><a href="docs/GRAH_Reglement_interieur.pdf">Règlement intérieur (PDF)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Nous suivre</h4>
+        <ul>
+          <li><a href="mailto:contact@grah-network.com">contact@grah-network.com</a></li>
+          <li><a href="https://www.instagram.com/grah_network/" rel="noopener">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+    <details class="legal">
+      <summary>Mentions légales</summary>
+      <div>
+        <p><b>Éditeur :</b> Groupe de Recherche artistique et d'Action sur l'Hospitalité (GRAH), association loi 1901, 10 Place Avogadro, 30900 Nîmes. RNA W302023215, SIRET 103 759 312 00012. Contact : contact@grah-network.com.</p>
+        <p><b>Directeur de la publication :</b> Jong Yeon WON, président de l'association.</p>
+        <p><b>Hébergement :</b> GitHub Pages, GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</p>
+        <p><b>Données personnelles :</b> ce site ne dépose aucun cookie et ne collecte aucune donnée. Les messages envoyés par e-mail ne servent qu'à vous répondre. Pour toute demande concernant vos données : contact@grah-network.com.</p>
+      </div>
+    </details>
+    <p class="muted" style="margin-top:20px">© <span id="y">2026</span> GRAH</p>
+  </div>
+</footer>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>
