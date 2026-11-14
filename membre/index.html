@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Espace membre — GRAH!</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="GRAH!">
+<style>
+@font-face { font-family: 'Archivo'; font-weight: 400; font-display: swap; src: url(../fonts/archivo-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 500; font-display: swap; src: url(../fonts/archivo-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 700; font-display: swap; src: url(../fonts/archivo-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 800; font-display: swap; src: url(../fonts/archivo-latin-800-normal.woff2) format('woff2'); }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --ink: #000; --paper: #fff; --soft: #F2F2F0; --grey: #5E5E5B; --hair: #D6D6D2; --yellow: #FFE800; --pink: #FF48B0; --aqua: #5EC8E5; --danger: #C8102E; --r: 10px; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--paper); color: var(--ink); font-family: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.wrap { max-width: 560px; margin: 0 auto; padding: 0 16px calc(48px + env(safe-area-inset-bottom)); }
+[hidden] { display: none !important; }
+
+.test-banner { background: var(--pink); border-bottom: 2px solid var(--ink); font-size: 13px; font-weight: 700; text-align: center; padding: 6px 12px; }
+.top { display: flex; align-items: center; justify-content: space-between; padding: max(14px, env(safe-area-inset-top)) 0 14px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; }
+.top a.brand { line-height: 0; }
+.top .logo { height: 32px; width: auto; }
+.top .right { display: flex; gap: 8px; align-items: center; font-size: 14px; font-weight: 700; }
+.link { background: none; border: none; font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; color: inherit; padding: 4px; }
+
+h1 { font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
+.lead { color: var(--grey); margin-bottom: 22px; }
+.mark { background-image: linear-gradient(transparent 55%, var(--yellow) 55%, var(--yellow) 92%, transparent 92%); }
+
+.field { margin-bottom: 14px; }
+.field > label, .label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.field small { display: block; font-size: 13px; color: var(--grey); margin-top: 4px; }
+.input { width: 100%; font: inherit; font-size: 17px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--paper); color: var(--ink); }
+.input.code { font-size: 28px; font-weight: 800; letter-spacing: .3em; text-align: center; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choices { display: grid; gap: 10px; }
+.choice { display: flex; gap: 12px; align-items: flex-start; border: 2px solid var(--ink); border-radius: var(--r); padding: 12px 14px; cursor: pointer; }
+.choice input { margin-top: 4px; width: 18px; height: 18px; accent-color: #000; flex-shrink: 0; }
+.choice b { display: block; }
+.choice span { font-size: 14px; color: var(--grey); }
+.choice:has(input:checked) { background: var(--yellow); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; margin-bottom: 12px; }
+.check input { margin-top: 3px; width: 18px; height: 18px; accent-color: #000; flex-shrink: 0; }
+
+.btn { display: block; width: 100%; text-align: center; text-decoration: none; font: inherit; font-weight: 800; font-size: 17px; padding: 14px 20px; border: 2.5px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--paper); cursor: pointer; transform: skewX(-9deg); margin-top: 6px; }
+.btn > span { display: inline-block; transform: skewX(9deg); }
+.btn.yellow { background: var(--yellow); color: var(--ink); }
+.btn.ghost { background: var(--paper); color: var(--ink); }
+.btn:disabled { opacity: .5; cursor: default; }
+.err { color: var(--danger); font-size: 14px; margin-top: 10px; min-height: 1.2em; }
+.note { font-size: 14px; color: var(--grey); margin-top: 10px; }
+.box { border: 2px solid var(--ink); border-radius: var(--r); padding: 16px; margin-top: 8px; }
+.box.soft { border: none; background: var(--soft); }
+
+/* ── Carte de membre (format carte d'identité 85,6 × 54 mm) ── */
+.card { position: relative; aspect-ratio: 85.6 / 54; width: 100%; border: 2.5px solid var(--ink); border-radius: 14px; background: var(--paper); overflow: hidden; container-type: inline-size; user-select: none; -webkit-user-select: none; }
+.card .stripe { position: absolute; right: -6%; top: -30%; width: 34%; height: 160%; background: var(--yellow); transform: skewX(-9deg); }
+.card .in { position: absolute; inset: 0; padding: 4.5cqw 5cqw 6.2cqw; display: grid; grid-template-columns: 24cqw 1fr; grid-template-rows: auto 1fr auto; column-gap: 4.5cqw; }
+.card .photo { grid-row: 1 / 3; width: 24cqw; aspect-ratio: 4 / 5; border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; background: var(--soft); }
+.card .photo img, .card .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .head { display: flex; justify-content: space-between; align-items: flex-start; }
+.card .kind { font-size: 3.1cqw; font-weight: 800; letter-spacing: .08em; }
+.card .glogo { height: 7.5cqw; width: auto; position: relative; }
+.card .who { align-self: center; }
+.card .name { font-size: 6.2cqw; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; }
+.card .cat { font-size: 3.4cqw; margin-top: 1cqw; }
+.card .meta { grid-column: 1 / 3; display: flex; justify-content: space-between; align-items: flex-end; gap: 3cqw; margin-top: 2cqw; }
+.card .meta dl { font-size: 2.9cqw; line-height: 1.35; }
+.card .meta dt { display: inline; color: var(--grey); }
+.card .meta dd { display: inline; font-weight: 700; }
+.card .status { display: inline-block; margin-top: 1.2cqw; font-size: 3.3cqw; font-weight: 800; padding: .4cqw 1.6cqw; border: 2px solid var(--ink); border-radius: 4px; background: var(--yellow); }
+.card .status.off { background: var(--soft); color: var(--grey); border-color: var(--grey); }
+.card .qr { width: 19cqw; height: 19cqw; background: var(--paper); border: 2px solid var(--ink); border-radius: 4px; padding: .8cqw; position: relative; }
+.card .qr svg { width: 100%; height: 100%; display: block; }
+.card .foot { position: absolute; left: 5cqw; right: 5cqw; bottom: 1.6cqw; font-size: 2.2cqw; color: var(--grey); display: flex; justify-content: space-between; }
+.card .live { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
+.card .spin { display: inline-block; width: 2.4cqw; height: 2.4cqw; border: .5cqw solid var(--ink); border-top-color: transparent; border-radius: 50%; vertical-align: -0.3cqw; margin-right: .8cqw; animation: spin 2.4s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.card-actions { display: flex; gap: 16px; justify-content: center; margin-top: 10px; font-size: 14px; }
+
+.benefits { list-style: none; }
+.benefits li { padding: 8px 0 8px 22px; border-top: 1px solid var(--hair); position: relative; font-size: 15px; }
+.benefits li::before { content: ""; position: absolute; left: 2px; top: 15px; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
+.pay-amount { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; }
+.photo-row { display: flex; gap: 14px; align-items: center; }
+.photo-row .thumb { width: 72px; height: 90px; border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; background: var(--soft); flex-shrink: 0; }
+.photo-row .thumb img, .photo-row .thumb svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-row .acts { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 700; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
+.toast.show { opacity: 1; }
+
+@media print {
+  @page { size: 85.6mm 54mm; margin: 0; }
+  body * { visibility: hidden; }
+  #card, #card * { visibility: visible; }
+  #card { position: fixed; left: 0; top: 0; width: 85.6mm; border-radius: 3mm; }
+  .test-banner { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .card .spin { animation: none; } }
+</style>
+<script src="supabase.js"></script>
+<script src="qrcode.js"></script>
+</head>
+<body>
+<div class="test-banner" id="test-banner" hidden>Version de test — les paiements passent par le bac à sable HelloAsso : aucun paiement réel.</div>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="../" aria-label="GRAH! — site de l'association"><svg class="logo" viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></a>
+    <div class="right">
+      <a id="lnk-compta" href="../grah-compta/" hidden>Comptabilité</a>
+      <button class="link" id="btn-out" hidden>Se déconnecter</button>
+    </div>
+  </header>
+
+  <!-- 1. Connexion -->
+  <section id="v-login" hidden>
+    <h1>Espace membre</h1>
+    <p class="lead">Adhérez ou retrouvez votre carte de membre. Saisissez votre adresse e-mail : vous recevrez un code de connexion, sans mot de passe.</p>
+    <div id="login-1">
+      <div class="field"><label for="l-email">Adresse e-mail</label><input class="input" id="l-email" type="email" autocomplete="email" inputmode="email" autocapitalize="off"></div>
+      <button class="btn" id="l-send"><span>Recevoir le code</span></button>
+    </div>
+    <div id="login-2" hidden>
+      <p class="note" id="l-sent" style="margin:0 0 14px"></p>
+      <div class="field"><label for="l-code">Code reçu par e-mail</label><input class="input code" id="l-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10"></div>
+      <button class="btn" id="l-verify"><span>Se connecter</span></button>
+      <p style="text-align:center;margin-top:12px"><button class="link" id="l-back">Changer d'adresse</button></p>
+    </div>
+    <p class="err" id="l-err" role="alert"></p>
+    <p class="note">Pas encore membre ? Connectez-vous avec votre adresse : le formulaire d'adhésion s'affiche ensuite.</p>
+  </section>
+
+  <!-- 2. Adhésion -->
+  <section id="v-join" hidden>
+    <h1>Adhérer au GRAH</h1>
+    <p class="lead">Connecté·e avec <b id="j-email"></b>. Quelques informations, puis le règlement de la cotisation.</p>
+    <div class="row2">
+      <div class="field"><label for="j-first">Prénom</label><input class="input" id="j-first" autocomplete="given-name"></div>
+      <div class="field"><label for="j-last">Nom</label><input class="input" id="j-last" autocomplete="family-name"></div>
+    </div>
+    <div class="field"><label for="j-phone">Téléphone <span style="font-weight:400;color:var(--grey)">(facultatif)</span></label><input class="input" id="j-phone" type="tel" autocomplete="tel"></div>
+    <div class="field"><label for="j-address">Adresse postale <span style="font-weight:400;color:var(--grey)">(facultatif)</span></label><input class="input" id="j-address" autocomplete="street-address"></div>
+
+    <p class="label" style="margin-top:20px">Type d'adhésion</p>
+    <div class="choices">
+      <label class="choice"><input type="radio" name="j-cat" value="adherent" checked><div><b>Membre adhérent·e — 10 € / an</b><span>Participer à la vie de l'association, voter à l'assemblée générale, accéder à l'atelier et au réseau.</span></div></label>
+      <label class="choice"><input type="radio" name="j-cat" value="bienfaiteur"><div><b>Membre bienfaiteur·rice — 100 € minimum / an</b><span>Soutenir financièrement l'association, sans participer à ses activités. Voix consultative à l'AG.</span></div></label>
+    </div>
+    <label class="check" id="j-student-row" style="margin-top:12px"><input type="checkbox" id="j-student"><span><b>Tarif étudiant·e (5 €)</b> — sur présentation de votre carte d'étudiant·e lors d'une rencontre ; nous n'en gardons aucune copie.</span></label>
+    <p class="note">Membre actif·ve (poste à l'atelier, portage de projets) : sur demande au bureau, une fois adhérent·e.</p>
+
+    <h2>Hébergement solidaire <span style="font-weight:400;color:var(--grey);font-size:14px">(facultatif)</span></h2>
+    <label class="check"><input type="checkbox" id="j-heb"><span>Je souhaite être mis·e en relation avec le réseau d'hébergement solidaire partenaire. L'association ne garde que cet accord et sa date ; vous pouvez le retirer à tout moment.</span></label>
+
+    <h2>Engagements</h2>
+    <label class="check"><input type="checkbox" id="j-adult"><span>Je suis majeur·e. <span style="color:var(--grey)">(Pour une personne mineure, l'adhésion se fait avec l'accord écrit d'un représentant légal : écrivez à contact@grah-network.com.)</span></span></label>
+    <label class="check"><input type="checkbox" id="j-consent"><span>J'ai lu les <a href="../docs/GRAH_Statuts.pdf" target="_blank" rel="noopener">statuts</a> et le <a href="../docs/GRAH_Reglement_interieur.pdf" target="_blank" rel="noopener">règlement intérieur</a>, et j'accepte que l'association conserve mes coordonnées pour gérer mon adhésion. Elles ne sont jamais transmises à des tiers ; je peux demander à les consulter ou les supprimer.</span></label>
+    <button class="btn yellow" id="j-submit"><span>Continuer</span></button>
+    <p class="err" id="j-err" role="alert"></p>
+  </section>
+
+  <!-- 3. Membre -->
+  <section id="v-member" hidden>
+    <div id="card" class="card" aria-label="Carte de membre">
+      <div class="stripe"></div>
+      <div class="in">
+        <div class="photo" id="c-photo"></div>
+        <div class="head"><div class="kind">CARTE DE MEMBRE</div><svg class="glogo" viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></div>
+        <div class="who"><div class="name" id="c-name"></div><div class="cat" id="c-cat"></div></div>
+        <div class="meta">
+          <div>
+            <dl>
+              <div><dt>N° </dt><dd id="c-no"></dd></div>
+              <div><dt>Membre depuis </dt><dd id="c-since"></dd></div>
+              <div><dt>Valable jusqu'au </dt><dd id="c-until"></dd></div>
+            </dl>
+            <span class="status" id="c-status"></span>
+          </div>
+          <div class="qr" id="c-qr" aria-label="Code QR de vérification"></div>
+        </div>
+      </div>
+      <div class="foot"><span>GRAH · 10 Place Avogadro, Nîmes · RNA W302023215</span><span class="live"><span class="spin"></span><span id="c-clock"></span></span></div>
+    </div>
+    <div class="card-actions"><button class="link" id="btn-print">Imprimer / PDF</button></div>
+
+    <div id="pay-box" hidden>
+      <h2 id="pay-title"></h2>
+      <div class="box">
+        <div id="pay-fixed"><div class="pay-amount" id="pay-amount"></div></div>
+        <div id="pay-free" hidden class="field"><label for="pay-input">Montant (100 € minimum)</label><input class="input" id="pay-input" type="number" min="100" step="1" value="100" inputmode="numeric"></div>
+        <button class="btn yellow" id="btn-pay"><span>Payer en ligne avec HelloAsso</span></button>
+        <p class="note">Paiement sécurisé par HelloAsso, plateforme des associations. HelloAsso vous proposera une contribution volontaire à son fonctionnement : elle est facultative, vous pouvez la mettre à 0 €.</p>
+        <p class="note">Vous préférez payer en espèces ou par virement ? Adressez-vous au bureau : votre carte sera activée dès réception.</p>
+        <p class="err" id="pay-err" role="alert"></p>
+      </div>
+    </div>
+    <div id="pay-wait" class="box soft" hidden><b>Paiement en cours de vérification…</b><p class="note" style="margin-top:4px">Cela prend en général quelques secondes. Vous pouvez laisser cette page ouverte.</p></div>
+
+    <h2>Vos avantages</h2>
+    <ul class="benefits" id="benefits"></ul>
+
+    <h2>Mes informations</h2>
+    <div class="photo-row field">
+      <div class="thumb" id="p-thumb"></div>
+      <div class="acts">
+        <span class="label" style="margin:0">Photo de la carte</span>
+        <button class="link" id="btn-photo">Choisir une photo</button>
+        <button class="link" id="btn-photo-del" hidden>Retirer la photo</button>
+        <input type="file" id="f-photo" accept="image/*" hidden>
+      </div>
+    </div>
+    <p class="note" style="margin:-6px 0 16px">Visible uniquement par vous et le bureau. Jamais sur la page de vérification.</p>
+    <div class="field"><label>Adresse e-mail</label><input class="input" id="p-email" disabled></div>
+    <div class="field"><label for="p-phone">Téléphone</label><input class="input" id="p-phone" type="tel" autocomplete="tel"></div>
+    <div class="field"><label for="p-address">Adresse postale</label><input class="input" id="p-address" autocomplete="street-address"></div>
+    <label class="check" id="p-heb-row"><input type="checkbox" id="p-heb"><span>Mise en relation avec le réseau d'hébergement solidaire partenaire <span id="p-heb-date" style="color:var(--grey)"></span></span></label>
+    <button class="btn ghost" id="btn-save"><span>Enregistrer</span></button>
+    <p class="note">Pour changer votre nom, votre type d'adhésion ou quitter l'association, écrivez à <a href="mailto:contact@grah-network.com">contact@grah-network.com</a>.</p>
+  </section>
+
+  <p id="v-loading" class="note" style="text-align:center;margin-top:40px">Chargement…</p>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const SB_URL = 'https://gxwnkhebrgqscyiqymud.supabase.co';
+const SB_KEY = 'sb_publishable_rWzYzPhQ-8dvxPRfqeCO8g_rH5mj1xe';
+const TEST_MODE = true;
+const FN_URL = SB_URL + '/functions/v1/helloasso';
+const CARD_URL = 'https://grah-network.com/carte/';
+
+const $ = id => document.getElementById(id);
+const sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'grah3-auth' } });
+let session = null, me = null, photoUrl = '', loginEmail = '';
+const CACHE = 'grah-membre-card';
+const SILHOUETTE = '<svg viewBox="0 0 80 100" aria-hidden="true"><rect width="80" height="100" fill="#F2F2F0"/><path d="M40 20c-9.5 0-16 7.2-16 17 0 8.6 5.4 17.5 16 17.5S56 45.6 56 37c0-9.8-6.5-17-16-17z" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 100c1.5-17 12-27.5 28-27.5S66.5 83 68 100" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round"/></svg>';
+const CAT = { founder: 'Membre fondateur·rice', actif: 'Membre actif·ve', adherent: 'Membre adhérent·e', bienfaiteur: 'Membre bienfaiteur·rice' };
+const ROLE = { president: 'Président·e', treasurer: 'Trésorier·e', secretary: 'Secrétaire', vicepresident: 'Vice-président·e' };
+const BEN = {
+  open: ['Ateliers de création et pique-niques', 'Vernissages, open studios et rencontres avec les artistes en résidence', 'Lettre d’information : actualités, appels à projets, résidences et aides'],
+  member: ['Voix délibérative à l’assemblée générale', 'Proposition d’idées de projets à l’association', 'Accès à l’atelier partagé, outils communs compris', 'Point d’atelier et mise en relation avec les structures partenaires', 'Mise en relation avec le réseau d’hébergement solidaire, sur demande', 'Réduction sur les objets et éditions de l’association'],
+  active: ['Poste de travail individuel dans l’atelier, avec participation aux frais', 'Portage de projets au nom du GRAH, sur accord du bureau', 'Priorité pour animer les ateliers de l’association, avec rémunération', 'Prêt du matériel de l’association', 'Présentation comme artiste membre sur le site, expositions et open studios', 'Éligibilité au bureau']
+};
+
+function toast(msg, ms = 2600) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms); }
+function show(v) { ['v-login', 'v-join', 'v-member', 'v-loading'].forEach(x => $(x).hidden = x !== v); $('btn-out').hidden = v === 'v-login' || v === 'v-loading'; }
+function fmtDate(d) { if (!d) return '—'; const [y, m, j] = d.slice(0, 10).split('-'); return `${j}/${m}/${y}`; }
+function todayParis() { return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date()); }
+function isValid(c) { return !!(c && c.valid_until && c.valid_until >= todayParis() && c.active); }
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function saveCache() { try { localStorage.setItem(CACHE, JSON.stringify({ me, photoData: $('c-photo').dataset.data || '' })); } catch (e) {} }
+function loadCache() { try { return JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (e) { return null; } }
+
+/* ───────── Connexion ───────── */
+$('l-send').onclick = async () => {
+  const email = $('l-email').value.trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { $('l-err').textContent = 'Vérifiez l’adresse e-mail.'; return; }
+  $('l-err').textContent = ''; $('l-send').disabled = true;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  $('l-send').disabled = false;
+  if (error) { $('l-err').textContent = /rate|limit|seconds/i.test(error.message) ? 'Trop de demandes : patientez une minute avant de redemander un code.' : 'Envoi impossible : ' + error.message; return; }
+  loginEmail = email;
+  $('l-sent').textContent = `Code envoyé à ${email}. Regardez aussi dans les indésirables.`;
+  $('login-1').hidden = true; $('login-2').hidden = false; $('l-code').value = ''; $('l-code').focus();
+};
+$('l-verify').onclick = async () => {
+  const token = $('l-code').value.replace(/\D/g, '');
+  if (token.length < 6) { $('l-err').textContent = 'Code incomplet.'; return; }
+  $('l-err').textContent = ''; $('l-verify').disabled = true;
+  const { data, error } = await sb.auth.verifyOtp({ email: loginEmail, token, type: 'email' });
+  $('l-verify').disabled = false;
+  if (error || !data.session) { $('l-err').textContent = 'Code incorrect ou expiré. Demandez un nouveau code.'; return; }
+  session = data.session; await load();
+};
+$('l-back').onclick = () => { $('login-1').hidden = false; $('login-2').hidden = true; $('l-err').textContent = ''; };
+$('l-email').onkeydown = e => { if (e.key === 'Enter') $('l-send').click(); };
+$('l-code').onkeydown = e => { if (e.key === 'Enter') $('l-verify').click(); };
+$('btn-out').onclick = async () => {
+  if (!confirm('Se déconnecter de cet appareil ?')) return;
+  try { localStorage.removeItem(CACHE); } catch (e) {}
+  await sb.auth.signOut({ scope: 'local' });
+  session = null; me = null; $('l-email').value = ''; $('login-1').hidden = false; $('login-2').hidden = true; show('v-login');
+};
+
+/* ───────── Chargement ───────── */
+async function load() {
+  const { data, error } = await sb.rpc('my_card');
+  if (error) {
+    const c = loadCache();
+    if (c && c.me) { me = c.me; renderMember(c.photoData); toast('Hors ligne : dernière carte enregistrée sur cet appareil', 3500); return; }
+    show('v-login'); $('l-err').textContent = 'Connexion impossible : ' + error.message; return;
+  }
+  me = data;
+  if (!me) { $('j-email').textContent = session.user.email; show('v-join'); return; }
+  await renderMember();
+}
+
+/* ───────── Adhésion ───────── */
+function syncStudent() { const b = document.querySelector('input[name=j-cat]:checked').value === 'bienfaiteur'; $('j-student-row').hidden = b; if (b) $('j-student').checked = false; }
+document.querySelectorAll('input[name=j-cat]').forEach(r => r.onchange = syncStudent);
+$('j-submit').onclick = async () => {
+  const first = $('j-first').value.trim(), last = $('j-last').value.trim();
+  const err = m => { $('j-err').textContent = m; };
+  if (first.length < 2 || last.length < 2) return err('Indiquez votre prénom et votre nom.');
+  if (!$('j-adult').checked) return err('L’adhésion en ligne est réservée aux personnes majeures (voir ci-dessus).');
+  if (!$('j-consent').checked) return err('Merci d’accepter les statuts, le règlement intérieur et la conservation de vos coordonnées.');
+  err(''); $('j-submit').disabled = true;
+  const cat = document.querySelector('input[name=j-cat]:checked').value;
+  const { data, error } = await sb.rpc('register_member', {
+    p_name: `${first} ${last.toUpperCase()}`, p_phone: $('j-phone').value, p_address: $('j-address').value,
+    p_category: cat, p_tarif: $('j-student').checked ? 'student' : 'normal', p_heb: $('j-heb').checked, p_consent: true
+  });
+  $('j-submit').disabled = false;
+  if (error) return err('Enregistrement impossible : ' + error.message);
+  me = data; await renderMember(); window.scrollTo(0, 0);
+  if (!isValid(me)) setTimeout(() => $('pay-box').scrollIntoView({ behavior: 'smooth' }), 300);
+};
+
+/* ───────── Carte ───────── */
+function qrSvg(text) {
+  const q = qrcode(0, 'M'); q.addData(text); q.make();
+  const n = q.getModuleCount(); let d = '';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c},${r}h1v1h-1z`;
+  return `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><path d="${d}" fill="#000"/></svg>`;
+}
+async function photoData(path) {
+  if (!path) return '';
+  try {
+    const { data, error } = await sb.storage.from('photos').download(path);
+    if (error) return '';
+    return await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(data); });
+  } catch (e) { return ''; }
+}
+async function renderMember(cachedPhoto) {
+  show('v-member');
+  const valid = isValid(me);
+  $('c-name').textContent = me.name;
+  $('c-cat').textContent = [CAT[me.category] || CAT.adherent, ROLE[me.role] || ''].filter(Boolean).join(' · ');
+  $('c-no').textContent = me.member_no || '—';
+  $('c-since').textContent = me.joined ? fmtDate(me.joined).slice(3) : '—';
+  $('c-until').textContent = me.valid_until ? fmtDate(me.valid_until) : '—';
+  $('c-status').textContent = valid ? 'À JOUR' : (me.valid_until ? 'COTISATION À RENOUVELER' : 'EN ATTENTE DE COTISATION');
+  $('c-status').classList.toggle('off', !valid);
+  $('c-qr').innerHTML = me.member_no && me.card_token ? qrSvg(`${CARD_URL}?n=${encodeURIComponent(me.member_no)}&t=${me.card_token}`) : '';
+  const pd = cachedPhoto !== undefined ? cachedPhoto : await photoData(me.photo);
+  $('c-photo').dataset.data = pd;
+  $('c-photo').innerHTML = $('p-thumb').innerHTML = pd ? `<img src="${pd}" alt="">` : SILHOUETTE;
+  $('btn-photo-del').hidden = !me.photo;
+  $('lnk-compta').hidden = !me.is_bureau;
+  // avantages
+  const lst = me.category === 'bienfaiteur' ? [...BEN.open, 'Voix consultative à l’assemblée générale']
+    : (me.category === 'actif' || me.category === 'founder') ? [...BEN.open, ...BEN.member, ...BEN.active] : [...BEN.open, ...BEN.member];
+  $('benefits').innerHTML = lst.map(b => `<li>${esc(b)}</li>`).join('');
+  // infos
+  $('p-email').value = me.email; $('p-phone').value = me.phone || ''; $('p-address').value = me.address || '';
+  $('p-heb').checked = !!me.heb; $('p-heb-date').textContent = me.heb && me.heb_date ? `(accord du ${fmtDate(me.heb_date)})` : '';
+  $('p-heb-row').hidden = me.category === 'bienfaiteur';
+  // paiement
+  const Y = +todayParis().slice(0, 4);
+  const canPay = !valid || (me.valid_until && +me.valid_until.slice(0, 4) === Y && +todayParis().slice(5, 7) >= 11);
+  $('pay-box').hidden = !canPay;
+  $('pay-wait').hidden = !(me.pending && !valid);
+  if (canPay) {
+    const year = valid ? Y + 1 : Y;
+    $('pay-title').textContent = valid ? `Renouveler pour ${year}` : `Ma cotisation ${year}`;
+    const bien = me.category === 'bienfaiteur';
+    $('pay-fixed').hidden = bien; $('pay-free').hidden = !bien;
+    $('pay-amount').textContent = (me.tarif === 'student' ? 5 : 10) + ' €';
+  }
+  saveCache();
+}
+setInterval(() => {
+  const n = new Date();
+  $('c-clock').textContent = n.toLocaleDateString('fr-FR') + ' ' + n.toLocaleTimeString('fr-FR');
+}, 1000);
+$('btn-print').onclick = () => window.print();
+
+/* ───────── Paiement ───────── */
+async function callFn(body) {
+  const { data: { session: s } } = await sb.auth.getSession();
+  const r = await fetch(FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + (s ? s.access_token : SB_KEY) }, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+  return d;
+}
+$('btn-pay').onclick = async () => {
+  $('pay-err').textContent = ''; $('btn-pay').disabled = true;
+  try {
+    const d = await callFn({ action: 'checkout', amount: +$('pay-input').value });
+    location.href = d.redirectUrl;
+  } catch (e) {
+    $('btn-pay').disabled = false;
+    $('pay-err').textContent = e.message === 'amount' ? 'Le montant minimum est de 100 €.' : e.message === 'already_valid' ? 'Votre adhésion est déjà à jour.' : 'Impossible d’ouvrir le paiement : ' + e.message;
+  }
+};
+async function handleReturn() {
+  const p = new URLSearchParams(location.search);
+  if (!p.has('paiement')) return;
+  const intent = p.get('checkoutIntentId');
+  history.replaceState(null, '', location.pathname);
+  if (p.get('paiement') === 'erreur' || p.get('code') === 'refused') { toast('Le paiement n’a pas abouti. Vous pouvez réessayer.', 4000); return; }
+  if (!intent) return;
+  $('pay-box').hidden = true; $('pay-wait').hidden = false;
+  for (let i = 0; i < 12; i++) {
+    try { const r = await callFn({ action: 'confirm', checkoutIntentId: intent }); if (r.status === 'paid') break; } catch (e) {}
+    await new Promise(r => setTimeout(r, 2500 + i * 500));
+  }
+  await load();
+  toast(isValid(me) ? 'Merci ! Votre adhésion est à jour.' : 'Paiement encore en vérification : rechargez la page dans quelques minutes.', 4500);
+}
+
+/* ───────── Mes informations ───────── */
+$('btn-save').onclick = async () => {
+  const { data, error } = await sb.rpc('update_my_profile', { p_phone: $('p-phone').value, p_address: $('p-address').value, p_heb: $('p-heb').checked, p_photo: null });
+  if (error) { toast('Enregistrement impossible : ' + error.message, 4000); return; }
+  me = data; await renderMember($('c-photo').dataset.data); toast('Enregistré');
+};
+$('btn-photo').onclick = () => $('f-photo').click();
+$('f-photo').onchange = async () => {
+  const f = $('f-photo').files[0]; $('f-photo').value = '';
+  if (!f) return;
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(f); });
+    const W = 480, H = 600, r = Math.max(W / img.width, H / img.height);
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    cv.getContext('2d').drawImage(img, (W - img.width * r) / 2, (H - img.height * r) / 2, img.width * r, img.height * r);
+    const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.85));
+    const path = `${session.user.id}/photo-${Date.now()}.jpg`;
+    const up = await sb.storage.from('photos').upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+    if (up.error) throw up.error;
+    const old = me.photo;
+    const { data, error } = await sb.rpc('update_my_profile', { p_phone: null, p_address: null, p_heb: null, p_photo: path });
+    if (error) throw error;
+    if (old) sb.storage.from('photos').remove([old]);
+    me = data; await renderMember(); toast('Photo enregistrée');
+  } catch (e) { toast('Photo impossible : ' + (e.message || e), 4000); }
+};
+$('btn-photo-del').onclick = async () => {
+  if (!confirm('Retirer la photo de votre carte ?')) return;
+  const old = me.photo;
+  const { data, error } = await sb.rpc('update_my_profile', { p_phone: null, p_address: null, p_heb: null, p_photo: '' });
+  if (error) { toast(error.message); return; }
+  if (old) sb.storage.from('photos').remove([old]);
+  me = data; await renderMember(''); toast('Photo retirée');
+};
+
+/* ───────── Démarrage ───────── */
+(async () => {
+  $('test-banner').hidden = !TEST_MODE;
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+  sb.auth.onAuthStateChange((ev, s) => { session = s; });
+  if (!session) { show('v-login'); return; }
+  await load();
+  await handleReturn();
+})();
+</script>
+</body>
+</html>
