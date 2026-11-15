@@ -301,6 +301,10 @@ async function load() {
     show('v-login'); $('l-err').textContent = 'Connexion impossible : ' + error.message; return;
   }
   me = data;
+  if (!me) {   // membre déjà inscrit dans la comptabilité avec la même adresse : rattachement direct
+    const l = await sb.rpc('link_member');
+    if (!l.error && l.data) me = l.data;
+  }
   if (!me) { $('j-email').textContent = session.user.email; show('v-join'); return; }
   await renderMember();
 }
