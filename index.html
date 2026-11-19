@@ -139,6 +139,22 @@ section.block.soft { background: var(--soft); }
 .camp .until { font-size: 14px; font-weight: 700; margin-top: 12px; }
 .camp .btns { margin-top: auto; padding-top: 16px; }
 
+/* Artistes membres (fiches validées par le bureau, chargées automatiquement) */
+.artists { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
+.artist { border: 2.5px solid var(--ink); border-radius: var(--r); background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+.artist .ph { aspect-ratio: 1; background: var(--soft); border-bottom: 2.5px solid var(--ink); overflow: hidden; }
+.artist .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.artist .bd { padding: 16px 18px 18px; }
+.artist h4 { font-size: 20px; font-weight: 800; line-height: 1.15; }
+.artist .disc { font-size: 14px; font-weight: 700; margin-top: 4px; }
+.artist p { font-size: 15px; margin-top: 8px; }
+.artist .lk { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; font-weight: 700; }
+.newsform { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.newsform input[type=email] { font: inherit; font-size: 16px; padding: 11px 14px; border: 2.5px solid var(--ink); border-radius: 6px; min-width: 0; flex: 1 1 220px; background: var(--paper); }
+.newsform .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.news .msg { flex-basis: 100%; font-size: 14.5px; font-weight: 700; min-height: 1.2em; }
+.news .rgpd { flex-basis: 100%; font-size: 13px; color: var(--grey); }
+
 /* Tableau Participer */
 .table-wrap { border: 2.5px solid var(--ink); border-radius: var(--r); overflow: hidden; background: var(--paper); }
 table.adv { width: 100%; border-collapse: collapse; font-size: 16px; }
@@ -203,7 +219,7 @@ details.legal p + p { margin-top: 8px; }
   .sec-head { grid-template-columns: 1fr; gap: 8px; }
   .sec-num { padding-top: 0; }
   .sec-body { margin-left: 0; }
-  .tiers, .contact { grid-template-columns: 1fr 1fr; }
+  .tiers, .contact, .artists { grid-template-columns: 1fr 1fr; }
   footer .cols { grid-template-columns: 1fr 1fr; }
 }
 /* En-tête compact */
@@ -221,7 +237,7 @@ details.legal p + p { margin-top: 8px; }
   body { font-size: 16px; }
   .hero .wrap { grid-template-columns: 1fr; }
   .hero-logo { order: -1; max-width: 340px; }
-  .facts, .ways, .cards, .tiers, .steps, .rules, .host, .contact { grid-template-columns: 1fr; }
+  .facts, .ways, .cards, .artists, .tiers, .steps, .rules, .host, .contact { grid-template-columns: 1fr; }
   .fact + .fact { border-left: none; border-top: 2px solid var(--ink); }
   table.adv { font-size: 14.5px; }
   table.adv th, table.adv td { padding: 10px 8px; }
@@ -303,6 +319,12 @@ details.legal p + p { margin-top: 8px; }
         <div class="fact"><strong>2026</strong><span>déclaration en association loi 1901</span></div>
         <div class="fact"><strong>2 quartiers</strong><span>Pissevin-Valdegour et Saint-Césaire</span></div>
       </div>
+
+      <div class="support" id="artistes" hidden>
+        <h3 class="support-title"><span class="mark aqua">Artistes membres</span></h3>
+        <p class="support-lead">Les membres actifs de l'association présentent leur travail.</p>
+        <div class="artists" id="artists"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -354,6 +376,20 @@ details.legal p + p { margin-top: 8px; }
           </div>
         </div>
         <div class="camps" id="camps" tabindex="0" aria-label="Campagnes en cours"></div>
+      </div>
+
+      <div class="support" id="boutique" hidden>
+        <div class="support-head">
+          <div>
+            <h3 class="support-title"><span class="mark">Éditions et objets</span></h3>
+            <p class="support-lead">Les ventes financent les activités de l'association. Les membres bénéficient d'une réduction : demandez-la au bureau.</p>
+          </div>
+          <div class="slide-nav" id="shop-nav" hidden>
+            <button type="button" id="shop-prev" aria-label="Précédent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="3"/></svg></button>
+            <button type="button" id="shop-next" aria-label="Suivant"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 8 8-8 8" fill="none" stroke="currentColor" stroke-width="3"/></svg></button>
+          </div>
+        </div>
+        <div class="camps" id="shop" tabindex="0" aria-label="Éditions et objets"></div>
       </div>
     </div>
   </div>
@@ -503,9 +539,16 @@ details.legal p + p { margin-top: 8px; }
           <p class="big">10 Place Avogadro<br>30900 Nîmes</p>
         </div>
       </div>
-      <div class="news">
+      <div class="news" id="lettre">
         <p><b>La lettre d'information</b>Actualités de l'association, appels à projets, résidences et aides. Ouverte à tous, sans adhésion.</p>
-        <a class="btn aqua" href="mailto:contact@grah-network.com?subject=Inscription%20%C3%A0%20la%20lettre%20d%27information"><span>S'inscrire</span></a>
+        <form class="newsform" id="newsform" novalidate>
+          <label for="nf-email" class="hp">Adresse e-mail</label>
+          <input type="email" id="nf-email" name="email" placeholder="votre@adresse.fr" autocomplete="email" required aria-label="Adresse e-mail">
+          <span class="hp" aria-hidden="true"><input type="text" name="website" id="nf-web" tabindex="-1" autocomplete="off"></span>
+          <button class="btn aqua" type="submit"><span>S'inscrire</span></button>
+        </form>
+        <p class="msg" id="nf-msg" role="status" aria-live="polite"></p>
+        <p class="rgpd">Vous recevrez un e-mail pour confirmer. Désinscription en un clic dans chaque lettre. Adresse utilisée uniquement pour la lettre, jamais transmise à des tiers.</p>
       </div>
     </div>
   </div>
@@ -527,6 +570,8 @@ details.legal p + p { margin-top: 8px; }
         <ul>
           <li><a href="docs/GRAH_Statuts.pdf">Statuts (PDF)</a></li>
           <li><a href="docs/GRAH_Reglement_interieur.pdf">Règlement intérieur (PDF)</a></li>
+          <li><a href="formulaires/image/">Autorisation d'image</a></li>
+          <li><a href="formulaires/don/">Déclaration de don</a></li>
         </ul>
       </div>
       <div>
@@ -543,30 +588,31 @@ details.legal p + p { margin-top: 8px; }
         <p><b>Éditeur :</b> Groupe de Recherche artistique et d'Action sur l'Hospitalité (GRAH), association loi 1901, 10 Place Avogadro, 30900 Nîmes. RNA W302023215, SIRET 103 759 312 00012. Contact : contact@grah-network.com.</p>
         <p><b>Directeur de la publication :</b> Jong Yeon WON, président de l'association.</p>
         <p><b>Hébergement :</b> GitHub Pages, GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</p>
-        <p><b>Données personnelles :</b> ce site ne dépose aucun cookie et ne collecte aucune donnée. Les messages envoyés par e-mail ne servent qu'à vous répondre. Pour toute demande concernant vos données : contact@grah-network.com.</p>
+        <p><b>Données personnelles :</b> ce site ne dépose aucun cookie publicitaire ni de mesure d'audience. Les données saisies dans l'espace membre et les formulaires (autorisation d'image, déclaration de don) servent uniquement à la gestion de l'association et ne sont accessibles qu'à son bureau ; elles sont hébergées dans l'Union européenne (Supabase, Paris). L'adresse donnée pour la lettre d'information est gérée avec Brevo (France) et sert uniquement à son envoi. Les messages envoyés par e-mail ne servent qu'à vous répondre. Accès, rectification ou suppression : contact@grah-network.com.</p>
       </div>
     </details>
     <p class="muted" style="margin-top:20px">© <span id="y">2026</span> GRAH</p>
   </div>
 </footer>
 <script>
-// Campagnes de financement participatif publiées sur HelloAsso : affichées automatiquement, masquées s'il n'y en a pas.
+// Contenus chargés automatiquement : campagnes et boutique (HelloAsso), artistes membres (espace membre), lettre d'information.
 (function () {
-  var FN = 'https://gxwnkhebrgqscyiqymud.supabase.co/functions/v1/helloasso?action=campaigns';
-  var box = document.getElementById('soutenir'), list = document.getElementById('camps');
+  var SB = 'https://gxwnkhebrgqscyiqymud.supabase.co', KEY = 'sb_publishable_rWzYzPhQ-8dvxPRfqeCO8g_rH5mj1xe';
+  var HTTPS = /^https:\/\//;
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  function $(id) { return document.getElementById(id); }
   function until(end) {
     var d = new Date(end), days = Math.ceil((d - new Date()) / 864e5);
     var date = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
-    return 'Jusqu\u2019au ' + date + (days <= 1 ? ' \u00b7 dernier jour' : days <= 30 ? ' \u00b7 encore ' + days + ' jours' : '');
+    return 'Jusqu’au ' + date + (days <= 1 ? ' · dernier jour' : days <= 30 ? ' · encore ' + days + ' jours' : '');
   }
-  fetch(FN).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-    var cs = (d && d.campaigns || []).filter(function (c) { return c.url && /^https:\/\//.test(c.url); });
-    if (!cs.length) return;
-    cs.forEach(function (c) {
-      var a = el('article', 'camp');
-      var cover = el('div', 'cover');
-      if (c.image && /^https:\/\//.test(c.image)) { var img = el('img'); img.src = c.image; img.alt = ''; img.loading = 'lazy'; img.onerror = function () { img.remove(); }; cover.appendChild(img); }
+  // une rangée de cartes qui défile, avec flèches
+  function slider(items, list, box, nav, prev, next, label) {
+    items = items.filter(function (c) { return c.url && HTTPS.test(c.url); });
+    if (!items.length) return false;
+    items.forEach(function (c) {
+      var a = el('article', 'camp'), cover = el('div', 'cover');
+      if (c.image && HTTPS.test(c.image)) { var img = el('img'); img.src = c.image; img.alt = ''; img.loading = 'lazy'; img.onerror = function () { img.remove(); }; cover.appendChild(img); }
       a.appendChild(cover);
       var b = el('div', 'body');
       b.appendChild(el('h4', '', c.title));
@@ -574,28 +620,62 @@ details.legal p + p { margin-top: 8px; }
       if (c.end) b.appendChild(el('p', 'until', until(c.end)));
       var bt = el('div', 'btns'), link = el('a', 'btn yellow');
       link.href = c.url; link.target = '_blank'; link.rel = 'noopener';
-      link.appendChild(el('span', '', 'Soutenir'));
-      link.setAttribute('aria-label', 'Soutenir \u00ab ' + c.title + ' \u00bb sur HelloAsso (nouvel onglet)');
+      link.appendChild(el('span', '', label));
+      link.setAttribute('aria-label', label + ' « ' + c.title + ' » sur HelloAsso (nouvel onglet)');
       bt.appendChild(link); b.appendChild(bt); a.appendChild(b); list.appendChild(a);
     });
-    list.classList.add(cs.length === 1 ? 'one' : cs.length > 2 ? 'many' : 'two');
+    list.classList.add(items.length === 1 ? 'one' : items.length > 2 ? 'many' : 'two');
     box.hidden = false;
-    // flèches : visibles seulement si la rangée dépasse, désactivées aux extrémités
-    var nav = document.getElementById('camps-nav'), prev = document.getElementById('camps-prev'), next = document.getElementById('camps-next');
     function step() { var c = list.querySelector('.camp'); return c ? c.getBoundingClientRect().width + 18 : list.clientWidth; }
-    function upd() {
-      var max = list.scrollWidth - list.clientWidth;
-      nav.hidden = max < 4;
-      prev.disabled = list.scrollLeft < 4;
-      next.disabled = list.scrollLeft > max - 4;
-    }
+    function upd() { var max = list.scrollWidth - list.clientWidth; nav.hidden = max < 4; prev.disabled = list.scrollLeft < 4; next.disabled = list.scrollLeft > max - 4; }
     prev.onclick = function () { list.scrollBy({ left: -step() }); };
     next.onclick = function () { list.scrollBy({ left: step() }); };
     list.addEventListener('scroll', function () { window.requestAnimationFrame(upd); }, { passive: true });
     window.addEventListener('resize', upd);
     upd();
-    document.getElementById('hero-soutenir').hidden = false;
+    return true;
+  }
+  fetch(SB + '/functions/v1/helloasso?action=campaigns').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+    if (!d) return;
+    if (slider(d.campaigns || [], $('camps'), $('soutenir'), $('camps-nav'), $('camps-prev'), $('camps-next'), 'Soutenir')) $('hero-soutenir').hidden = false;
+    slider(d.shop || [], $('shop'), $('boutique'), $('shop-nav'), $('shop-prev'), $('shop-next'), 'Voir');
   }).catch(function () {});
+
+  // artistes membres
+  fetch(SB + '/rest/v1/rpc/public_artists', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: '{}' })
+    .then(function (r) { return r.ok ? r.json() : null; }).then(function (list) {
+      if (!list || !list.length) return;
+      list.forEach(function (a) {
+        var c = el('article', 'artist'), ph = el('div', 'ph');
+        if (a.photo) { var img = el('img'); img.src = SB + '/storage/v1/object/public/artistes/' + a.photo.split('/').map(encodeURIComponent).join('/'); img.alt = 'Portrait ou œuvre de ' + a.name; img.loading = 'lazy'; img.onerror = function () { img.remove(); }; ph.appendChild(img); }
+        c.appendChild(ph);
+        var bd = el('div', 'bd');
+        bd.appendChild(el('h4', '', a.name));
+        if (a.discipline) bd.appendChild(el('div', 'disc', a.discipline));
+        if (a.bio) bd.appendChild(el('p', '', a.bio));
+        var lk = el('div', 'lk');
+        if (a.website && /^https?:\/\//.test(a.website)) { var w = el('a', '', 'Site'); w.href = a.website; w.target = '_blank'; w.rel = 'noopener'; lk.appendChild(w); }
+        if (a.instagram) { var ig = el('a', '', '@' + a.instagram); ig.href = 'https://www.instagram.com/' + encodeURIComponent(a.instagram) + '/'; ig.target = '_blank'; ig.rel = 'noopener'; lk.appendChild(ig); }
+        if (lk.childNodes.length) bd.appendChild(lk);
+        c.appendChild(bd); $('artists').appendChild(c);
+      });
+      $('artistes').hidden = false;
+    }).catch(function () {});
+
+  // lettre d'information : confirmation par e-mail (double opt-in)
+  $('newsform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = $('nf-email').value.trim(), msg = $('nf-msg'), btn = this.querySelector('button');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) { msg.textContent = 'Vérifiez l’adresse e-mail.'; return; }
+    btn.disabled = true; msg.textContent = 'Envoi…';
+    fetch(SB + '/functions/v1/grah', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'subscribe', email: email, website: $('nf-web').value }) })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (x) {
+        btn.disabled = false;
+        if (x.ok) { msg.textContent = 'Presque fini : un e-mail de confirmation vient de partir à ' + email + '. Pensez à regarder dans les indésirables.'; $('nf-email').value = ''; }
+        else msg.textContent = x.d.error === 'rate' ? 'Un e-mail vous a déjà été envoyé : vérifiez votre boîte, ou réessayez dans quelques minutes.' : 'Inscription impossible pour le moment. Écrivez-nous à contact@grah-network.com.';
+      }).catch(function () { btn.disabled = false; msg.textContent = 'Inscription impossible pour le moment. Écrivez-nous à contact@grah-network.com.'; });
+  });
 })();
 </script>
 <script>document.getElementById('y').textContent = new Date().getFullYear();</script>

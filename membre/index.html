@@ -105,6 +105,34 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 .camp b { display: block; font-size: 16px; line-height: 1.2; }
 .camp p { font-size: 13.5px; color: var(--grey); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .camp .go { font-size: 13.5px; font-weight: 800; margin-top: auto; padding-top: 8px; text-decoration: underline; text-underline-offset: 3px; }
+/* onglets */
+.tabs { display: flex; gap: 4px; margin: -8px 0 20px; border-bottom: 2px solid var(--ink); overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { font: inherit; font-weight: 800; font-size: 15px; background: none; border: none; padding: 10px 12px 9px; cursor: pointer; color: var(--grey); border-bottom: 4px solid transparent; margin-bottom: -2px; white-space: nowrap; position: relative; }
+.tabs button.on { color: var(--ink); border-bottom-color: var(--yellow); }
+.tabs .dot { position: absolute; top: 7px; right: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--pink); }
+.badge { display: inline-block; font-size: 12px; font-weight: 800; padding: 1px 8px; border: 2px solid var(--ink); border-radius: 999px; background: var(--soft); white-space: nowrap; }
+.badge.y { background: var(--yellow); } .badge.p { background: var(--pink); } .badge.a { background: var(--aqua); } .badge.g { color: var(--grey); border-color: var(--hair); }
+.item { border: 2px solid var(--ink); border-radius: var(--r); padding: 14px 16px; margin-top: 10px; }
+.item .row { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+.item .when { font-weight: 800; font-size: 17px; }
+.item .sub { font-size: 14px; color: var(--grey); }
+.item details { margin-top: 8px; font-size: 14px; }
+.item summary { cursor: pointer; font-weight: 700; }
+.pre { white-space: pre-wrap; }
+.choice.sm { padding: 9px 12px; }
+.doctext { white-space: pre-wrap; font-size: 13.5px; line-height: 1.5; background: var(--soft); border-radius: var(--r); padding: 14px; max-height: 300px; overflow-y: auto; margin: 8px 0 12px; }
+.padbox { border: 2px dashed var(--ink); border-radius: var(--r); background: var(--paper); position: relative; }
+.padbox canvas { display: block; width: 100%; height: 150px; cursor: crosshair; }
+.padbox .hint { position: absolute; left: 12px; bottom: 8px; font-size: 12px; color: var(--grey); pointer-events: none; }
+.padbox .clear { position: absolute; right: 6px; top: 4px; font-size: 13px; }
+textarea.input { min-height: 96px; resize: vertical; line-height: 1.45; }
+select.input { appearance: auto; }
+.count { font-size: 12px; color: var(--grey); text-align: right; margin-top: 2px; }
+.art-photo { width: 96px; height: 96px; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; background: var(--soft); flex-shrink: 0; }
+.art-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.btnrow { display: flex; gap: 10px; flex-wrap: wrap; }
+.btnrow .btn { flex: 1 1 180px; }
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 700; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
 .toast.show { opacity: 1; }
 
@@ -119,6 +147,7 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 </style>
 <script src="supabase.js"></script>
 <script src="qrcode.js"></script>
+<script src="ui.js"></script>
 </head>
 <body>
 <div class="test-banner" id="test-banner" hidden>Version de test — les paiements passent par le bac à sable HelloAsso : aucun paiement réel.</div>
@@ -126,6 +155,7 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
   <header class="top">
     <a class="brand" href="../" aria-label="GRAH! — site de l'association"><svg class="logo" viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></a>
     <div class="right">
+      <a id="lnk-bureau" href="bureau/" hidden>Bureau</a>
       <a id="lnk-compta" href="../grah-compta/" hidden>Comptabilité</a>
       <button class="link" id="btn-out" hidden>Se déconnecter</button>
     </div>
@@ -180,6 +210,13 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 
   <!-- 3. Membre -->
   <section id="v-member" hidden>
+    <nav class="tabs" id="tabs" aria-label="Rubriques de l'espace membre">
+      <button data-tab="carte" class="on">Ma carte</button>
+      <button data-tab="vie">Vie de l'asso<span class="dot" id="dot-vie" hidden></span></button>
+      <button data-tab="atelier" id="tab-atelier">Atelier<span class="dot" id="dot-atelier" hidden></span></button>
+      <button data-tab="profil">Profil</button>
+    </nav>
+    <div data-panel="carte">
     <div id="card" class="card" aria-label="Carte de membre">
       <div class="stripe"></div>
       <div class="in">
@@ -222,6 +259,40 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
       <h2>Projets à soutenir</h2>
       <div class="camps" id="camps"></div>
     </div>
+    </div>
+
+    <div data-panel="vie" hidden>
+      <h2 id="ag" style="margin-top:4px">Assemblées générales</h2>
+      <div id="ag-list"><p class="note">Chargement…</p></div>
+
+      <h2 id="demandes">Mes demandes</h2>
+      <div id="req-list"></div>
+      <div class="box" id="req-form" style="margin-top:12px">
+        <span class="label">Nouvelle demande</span>
+        <div class="choices" id="req-kinds"></div>
+        <div class="field" id="req-reason-row" hidden style="margin-top:12px"><label for="req-reason">Motif (règlement intérieur, art. 3)</label>
+          <select class="input" id="req-reason">
+            <option>Disposer d'un poste de travail individuel dans l'atelier</option>
+            <option>Porter un projet retenu par l'association</option>
+            <option>Participer régulièrement aux activités et à la vie de l'association</option>
+          </select></div>
+        <div class="field" style="margin-top:12px"><label for="req-msg" id="req-msg-label">Message</label><textarea class="input" id="req-msg" maxlength="3000"></textarea></div>
+        <p class="note" id="req-help"></p>
+        <button class="btn yellow" id="req-send"><span>Envoyer</span></button>
+        <p class="err" id="req-err" role="alert"></p>
+      </div>
+    </div>
+
+    <div data-panel="atelier" hidden>
+      <h2 id="atelier" style="margin-top:4px">Charte de l'atelier partagé</h2>
+      <div id="charte-box"><p class="note">Chargement…</p></div>
+      <h2>Convention de poste</h2>
+      <div id="conv-box"></div>
+      <h2 id="artiste">Ma fiche « Artistes membres »</h2>
+      <div id="artist-box"></div>
+    </div>
+
+    <div data-panel="profil" hidden>
 
     <h2>Mes informations</h2>
     <div class="photo-row field">
@@ -239,7 +310,11 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
     <div class="field"><label for="p-address">Adresse postale</label><input class="input" id="p-address" autocomplete="street-address"></div>
     <label class="check" id="p-heb-row"><input type="checkbox" id="p-heb"><span>Mise en relation avec le réseau d'hébergement solidaire partenaire <span id="p-heb-date" style="color:var(--grey)"></span></span></label>
     <button class="btn ghost" id="btn-save"><span>Enregistrer</span></button>
-    <p class="note">Pour changer votre nom, votre type d'adhésion ou quitter l'association, écrivez à <a href="mailto:contact@grah-network.com">contact@grah-network.com</a>.</p>
+    <p class="note">Pour changer votre nom, écrivez à <a href="mailto:contact@grah-network.com">contact@grah-network.com</a>. Pour changer de catégorie ou quitter l'association : <button class="link" data-go="demandes" style="padding:0">Vie de l'asso → Mes demandes</button>.</p>
+
+    <h2>Lettre d'information</h2>
+    <label class="check"><input type="checkbox" id="nl-on" disabled><span>Recevoir la lettre d'information : actualités de l'association, appels à projets, résidences et aides. <span id="nl-state" style="color:var(--grey)"></span></span></label>
+    </div>
   </section>
 
   <p id="v-loading" class="note" style="text-align:center;margin-top:40px">Chargement…</p>
@@ -388,7 +463,7 @@ async function renderMember(cachedPhoto) {
   $('c-photo').dataset.data = pd;
   $('c-photo').innerHTML = $('p-thumb').innerHTML = pd ? `<img src="${pd}" alt="">` : SILHOUETTE;
   $('btn-photo-del').hidden = !me.photo;
-  $('lnk-compta').hidden = !me.is_bureau;
+  $('lnk-compta').hidden = $('lnk-bureau').hidden = !me.is_bureau;
   // avantages
   const lst = me.category === 'bienfaiteur' ? [...BEN.open, 'Voix consultative à l’assemblée générale']
     : (me.category === 'actif' || me.category === 'founder') ? [...BEN.open, ...BEN.member, ...BEN.active] : [...BEN.open, ...BEN.member];
@@ -411,6 +486,7 @@ async function renderMember(cachedPhoto) {
     $('pay-amount').textContent = (me.tarif === 'student' ? 5 : 10) + ' €';
   }
   saveCache();
+  afterRender();
 }
 setInterval(() => {
   const n = new Date();
@@ -485,6 +561,286 @@ $('btn-photo-del').onclick = async () => {
   if (error) { toast(error.message); return; }
   if (old) sb.storage.from('photos').remove([old]);
   me = data; await renderMember(''); toast('Photo retirée');
+};
+
+/* ───────── Onglets ───────── */
+const TAB_OF = { carte: 'carte', vie: 'vie', ag: 'vie', demandes: 'vie', atelier: 'atelier', artiste: 'atelier', convention: 'atelier', profil: 'profil' };
+const loaded = {};
+function openTab(t, anchor) {
+  if (t === 'atelier' && $('tab-atelier').hidden) t = 'carte';
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t);
+  if (!loaded[t]) { loaded[t] = true; ({ vie: loadVie, atelier: loadAtelier, profil: loadNewsletter })[t]?.(); }
+  if (anchor && $(anchor)) setTimeout(() => $(anchor).scrollIntoView({ block: 'start' }), 60);
+  else window.scrollTo(0, 0);
+}
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { history.replaceState(null, '', '#' + b.dataset.tab); openTab(b.dataset.tab); });
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { e.preventDefault(); openTab(TAB_OF[g.dataset.go], g.dataset.go); } });
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (TAB_OF[h]) openTab(TAB_OF[h], h); });
+function afterRender() {
+  $('tab-atelier').hidden = me.category === 'bienfaiteur';
+  if (!afterRender.done) {
+    afterRender.done = true;
+    const h = location.hash.slice(1);
+    if (TAB_OF[h]) openTab(TAB_OF[h], h);
+    // pastille : une convocation sans réponse
+    sb.rpc('my_assemblies').then(({ data }) => { $('dot-vie').hidden = !(data || []).some(a => !a.answer); });
+    if (me.category !== 'bienfaiteur') sb.rpc('my_conventions').then(({ data }) => { $('dot-atelier').hidden = !(data || []).some(c => c.status === 'a_signer'); });
+  }
+}
+
+/* ───────── Appels à la fonction « grah » (e-mails) ───────── */
+const GRAH_FN = SB_URL + '/functions/v1/grah';
+async function grahFn(body) {
+  const { data: { session: s } } = await sb.auth.getSession();
+  const r = await fetch(GRAH_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + (s ? s.access_token : SB_KEY) }, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || ('HTTP ' + r.status));
+  return d;
+}
+const notify = (type, id) => grahFn({ action: 'notify', type, id }).catch(e => console.warn('notify', e));
+const rpcErr = e => (e && e.message || String(e)).replace(/^.*?: /, '');
+
+/* ───────── Vie de l'asso : assemblées ───────── */
+const AGK = { AGO: 'Assemblée générale ordinaire', AGE: 'Assemblée générale extraordinaire' };
+const ANS = { present: 'Je serai présent·e', absent: 'Je ne pourrai pas venir', pouvoir: 'Je confie mon pouvoir à un membre' };
+async function loadVie() { await Promise.all([renderAg(), renderRequests()]); }
+async function renderAg() {
+  const { data, error } = await sb.rpc('my_assemblies');
+  if (error) { $('ag-list').innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  $('dot-vie').hidden = !data.some(a => !a.answer);
+  if (!data.length) { $('ag-list').innerHTML = '<p class="note">Aucune assemblée convoquée pour le moment. Vous recevrez la convocation par e-mail.</p>'; return; }
+  const year = d => new Date(d).getFullYear();
+  $('ag-list').innerHTML = data.map(a => {
+    const voteTxt = a.can_vote ? 'Vous avez une voix délibérative.'
+      : me.category === 'bienfaiteur' ? 'Vous pouvez y assister avec voix consultative (statuts, art. 8).'
+      : `Pour voter, votre cotisation ${year(a.starts_at)} doit être réglée (onglet « Ma carte »).`;
+    const holding = (a.holding || []).map(h => esc(h.name)).join(', ');
+    const opts = ['present', 'absent'].concat(a.can_vote ? ['pouvoir'] : []);
+    const holders = (a.holders || []);
+    return `<div class="item" data-ag="${a.id}">
+      <div class="row"><span class="badge ${a.kind === 'AGE' ? 'p' : 'y'}">${esc(AGK[a.kind])}</span>${a.answer ? `<span class="badge a">Répondu</span>` : '<span class="badge">À répondre</span>'}</div>
+      ${a.title ? `<div style="font-weight:700;margin-top:8px">${esc(a.title)}</div>` : ''}
+      <div class="when" style="margin-top:4px">${esc(GRAH.fmtDateTime(a.starts_at))}</div>
+      <div class="sub">${esc(a.place || 'Lieu précisé prochainement')}</div>
+      ${a.agenda ? `<details><summary>Ordre du jour</summary><div class="pre" style="margin-top:6px">${esc(a.agenda)}</div></details>` : ''}
+      <p class="note">${voteTxt}${holding ? ` <b>${holding}</b> vous a confié son pouvoir : vous voterez aussi en son nom.` : ''}</p>
+      <div class="choices" style="margin-top:10px">
+        ${opts.map(o => `<label class="choice sm"><input type="radio" name="ans-${a.id}" value="${o}" ${a.answer === o ? 'checked' : ''}><div><b>${ANS[o]}</b></div></label>`).join('')}
+      </div>
+      <div class="field" data-proxy hidden style="margin-top:10px"><label>Membre qui me représentera</label>
+        <select class="input">${holders.length ? holders.map(h => `<option value="${esc(h.id)}" ${a.proxy_to === h.id ? 'selected' : ''}>${esc(h.name)}</option>`).join('') : '<option value="">Aucun membre disponible pour le moment</option>'}</select>
+        <small>Un membre ne peut détenir qu'un seul pouvoir (règlement intérieur, art. 4).</small></div>
+      <button class="btn ghost" data-save style="margin-top:10px"><span>Enregistrer ma réponse</span></button>
+      <p class="err" role="alert"></p>
+    </div>`;
+  }).join('');
+  $('ag-list').querySelectorAll('[data-ag]').forEach(box => {
+    const id = box.dataset.ag;
+    const sync = () => { const v = box.querySelector('input:checked')?.value; box.querySelector('[data-proxy]').hidden = v !== 'pouvoir'; };
+    box.querySelectorAll('input[type=radio]').forEach(r => r.onchange = sync); sync();
+    box.querySelector('[data-save]').onclick = async () => {
+      const v = box.querySelector('input:checked')?.value, err = box.querySelector('.err');
+      if (!v) { err.textContent = 'Choisissez une réponse.'; return; }
+      const to = v === 'pouvoir' ? box.querySelector('select').value : null;
+      if (v === 'pouvoir' && !to) { err.textContent = 'Choisissez le membre qui vous représentera.'; return; }
+      err.textContent = '';
+      const { error } = await sb.rpc('answer_assembly', { p_id: id, p_answer: v, p_proxy_to: to });
+      if (error) { err.textContent = rpcErr(error); return; }
+      if (v === 'pouvoir') notify('answer', id);
+      toast('Réponse enregistrée'); renderAg();
+    };
+  });
+}
+
+/* ───────── Vie de l'asso : demandes ───────── */
+const RQ = { actif: 'Devenir membre actif·ve', adherent: 'Redevenir membre adhérent·e', demission: 'Quitter l’association', autre: 'Écrire au bureau' };
+const RQ_HELP = {
+  actif: 'Le bureau examine la demande et vous informe de sa décision (règlement intérieur, art. 3). Les membres actifs peuvent obtenir un poste individuel dans l’atelier, porter des projets au nom du GRAH et figurer parmi les artistes membres du site.',
+  adherent: 'Effet immédiat, sans nouvelle cotisation (art. 3). Si vous avez un poste individuel, votre convention prend fin.',
+  demission: 'Effet immédiat (art. 7) : votre carte est désactivée, votre accès à l’espace membre fermé, votre photo et votre accord d’hébergement solidaire supprimés. La cotisation versée n’est pas remboursable (art. 2). Vous recevez un avis de réception par e-mail.',
+  autre: 'Une question, une demande d’accès ou de suppression de vos données (RGPD)… Le bureau vous répond par e-mail.'
+};
+const RS = { recue: ['Reçue', 'y'], acceptee: ['Acceptée', 'a'], refusee: ['Non retenue', 'g'], traitee: ['Traitée', 'a'], annulee: ['Annulée', 'g'] };
+async function renderRequests() {
+  const kinds = (me.category === 'adherent' ? ['actif'] : me.category === 'actif' ? ['adherent'] : []).concat(['autre', 'demission']);
+  $('req-kinds').innerHTML = kinds.map((k, i) => `<label class="choice sm"><input type="radio" name="req-kind" value="${k}" ${i === 0 ? 'checked' : ''}><div><b>${RQ[k]}</b></div></label>`).join('');
+  const sync = () => {
+    const k = document.querySelector('input[name=req-kind]:checked').value;
+    $('req-reason-row').hidden = k !== 'actif';
+    $('req-help').textContent = RQ_HELP[k];
+    $('req-msg-label').textContent = k === 'autre' ? 'Message' : 'Message (facultatif)';
+    $('req-send').querySelector('span').textContent = k === 'demission' ? 'Envoyer ma démission' : 'Envoyer';
+  };
+  document.querySelectorAll('input[name=req-kind]').forEach(r => r.onchange = sync); sync();
+  const { data, error } = await sb.rpc('my_requests');
+  if (error) { $('req-list').innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  $('req-list').innerHTML = data.length ? data.map(r => `<div class="item">
+      <div class="row"><b>${esc(RQ[r.kind])}</b><span class="badge ${RS[r.status][1]}">${RS[r.status][0]}</span></div>
+      <div class="sub">${esc(GRAH.fmtDate(r.created_at))}${r.reason ? ' · ' + esc(r.reason) : ''}</div>
+      ${r.message ? `<p class="pre" style="font-size:14px;margin-top:6px">${esc(r.message)}</p>` : ''}
+      ${r.decision_note ? `<p style="font-size:14px;margin-top:6px"><b>Bureau :</b> <span class="pre">${esc(r.decision_note)}</span></p>` : ''}
+      ${r.status === 'recue' ? `<button class="link" data-cancel="${r.id}" style="margin-top:4px">Annuler la demande</button>` : ''}
+    </div>`).join('') : '<p class="note">Aucune demande pour le moment.</p>';
+  $('req-list').querySelectorAll('[data-cancel]').forEach(b => b.onclick = async () => {
+    if (!confirm('Annuler cette demande ?')) return;
+    const { error } = await sb.rpc('cancel_request', { p_id: b.dataset.cancel });
+    if (error) toast(rpcErr(error), 4000); else renderRequests();
+  });
+}
+$('req-send').onclick = async () => {
+  const k = document.querySelector('input[name=req-kind]:checked').value, msg = $('req-msg').value.trim();
+  if (k === 'autre' && msg.length < 3) { $('req-err').textContent = 'Écrivez votre message.'; return; }
+  if (k === 'demission' && !confirm('Confirmez-vous votre démission de l’association ?\n\nVotre carte sera désactivée et vous serez déconnecté·e.')) return;
+  if (k === 'adherent' && !confirm('Redevenir membre adhérent·e dès maintenant ?')) return;
+  $('req-err').textContent = ''; $('req-send').disabled = true;
+  if (k === 'demission' && me.photo) await sb.storage.from('photos').remove([me.photo]);
+  const { data, error } = await sb.rpc('submit_request', { p_kind: k, p_reason: k === 'actif' ? $('req-reason').value : '', p_message: msg });
+  $('req-send').disabled = false;
+  if (error) { $('req-err').textContent = rpcErr(error); return; }
+  await notify('request', data.id);
+  $('req-msg').value = '';
+  if (k === 'demission') {
+    try { localStorage.removeItem(CACHE); } catch (e) {}
+    await sb.auth.signOut({ scope: 'local' });
+    alert('Votre démission est enregistrée. Un avis de réception vous a été envoyé par e-mail. Merci pour votre engagement.');
+    location.href = '../'; return;
+  }
+  toast(k === 'actif' ? 'Demande envoyée au bureau' : 'Enregistré');
+  if (k === 'adherent') { await load(); }
+  renderRequests();
+};
+
+/* ───────── Atelier : charte, convention, fiche artiste ───────── */
+const isActif = () => me.category === 'actif' || me.category === 'founder';
+function padHtml(id) { return `<div class="padbox"><canvas id="${id}"></canvas><span class="hint">Signez ici (doigt, stylet ou souris)</span><button class="link clear" data-clear="${id}">Effacer</button></div>`; }
+const pads = {};
+function mountPad(id) { pads[id] = GRAH.pad($(id)); document.querySelector(`[data-clear="${id}"]`).onclick = () => pads[id].clear(); }
+function convDoc(c) {
+  const poste = c.kind === 'poste';
+  return {
+    title: c.title || (poste ? 'Convention d’utilisation d’un poste de travail' : 'Charte d’usage de l’atelier partagé'),
+    subtitle: me.name + (me.member_no ? ' · ' + me.member_no : ''),
+    meta: poste ? [['Poste', c.poste], ['Surface', c.surface ? String(c.surface).replace('.', ',') + ' m²' : ''], ['Participation aux frais', c.participation != null ? GRAH.euro(c.participation) + ' / mois' : ''], ['Début', c.start_date ? GRAH.fmtDate(c.start_date) : '']] : [],
+    body: c.text_snapshot,
+    sigs: [{ label: poste ? 'Le membre' : 'Signature', name: me.name, img: c.member_signature, date: c.member_signed_at }]
+      .concat(poste ? [{ label: 'Pour l’association (bureau)', name: c.bureau_name || '', img: c.bureau_signature, date: c.bureau_signed_at }] : [])
+  };
+}
+let convs = [];
+async function loadAtelier() { await Promise.all([renderConventions(), renderArtist()]); }
+async function renderConventions() {
+  const [{ data, error }, ct] = await Promise.all([sb.rpc('my_conventions'), sb.rpc('get_doc_text', { p_key: 'charte_atelier' })]);
+  if (error) { $('charte-box').innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  convs = data;
+  $('dot-atelier').hidden = !data.some(c => c.status === 'a_signer');
+  const ch = data.find(c => c.kind === 'charte' && c.status === 'signee');
+  if (ch) {
+    $('charte-box').innerHTML = `<div class="item"><div class="row"><b>Charte signée</b><span class="badge a">${esc(GRAH.fmtDate(ch.member_signed_at))}</span></div>
+      <button class="link" data-print="${ch.id}" style="margin-top:6px">Voir / imprimer</button></div>`;
+  } else {
+    $('charte-box').innerHTML = `<p class="note" style="margin-top:0">À signer lors de votre première utilisation de l'atelier partagé (règlement intérieur, art. 11).</p>
+      <div class="doctext">${esc(ct.data?.body || '')}</div>${padHtml('pad-charte')}
+      <button class="btn yellow" id="btn-charte" style="margin-top:10px"><span>Je signe la charte</span></button><p class="err" id="charte-err" role="alert"></p>`;
+    mountPad('pad-charte');
+    $('btn-charte').onclick = async () => {
+      if (pads['pad-charte'].isEmpty()) { $('charte-err').textContent = 'Signez dans le cadre ci-dessus.'; return; }
+      const { data: c, error } = await sb.rpc('sign_charte', { p_signature: pads['pad-charte'].toDataURL() });
+      if (error) { $('charte-err').textContent = rpcErr(error); return; }
+      notify('convention', c.id); toast('Charte signée'); renderConventions();
+    };
+  }
+  const posts = data.filter(c => c.kind === 'poste');
+  const ST = { a_signer: ['À signer', 'p'], signee_membre: ['En attente du bureau', 'y'], signee: ['Signée', 'a'], terminee: ['Terminée', 'g'] };
+  $('conv-box').innerHTML = posts.length ? posts.map(c => `<div class="item" id="conv-${c.id}">
+      <div class="row"><b>${esc(c.poste || 'Poste de travail')}</b><span class="badge ${ST[c.status][1]}">${ST[c.status][0]}</span></div>
+      <div class="sub">${[c.start_date ? 'Depuis le ' + GRAH.fmtDate(c.start_date) : '', c.surface ? String(c.surface).replace('.', ',') + ' m²' : '', c.participation != null ? GRAH.euro(c.participation) + ' / mois' : ''].filter(Boolean).map(esc).join(' · ')}</div>
+      ${c.status === 'a_signer' ? `<div class="doctext">${esc(c.text_snapshot)}</div>${padHtml('pad-' + c.id)}
+        <button class="btn yellow" data-sign="${c.id}" style="margin-top:10px"><span>Je signe la convention</span></button><p class="err" role="alert"></p>`
+      : `<button class="link" data-print="${c.id}" style="margin-top:6px">Voir / imprimer</button>`}
+    </div>`).join('')
+    : `<p class="note" style="margin-top:0">${isActif() ? 'Aucun poste individuel ne vous est attribué. Lorsque le bureau vous en attribue un, la convention apparaît ici pour signature.' : 'Les postes de travail individuels sont réservés aux membres actifs (règlement intérieur, art. 11). <button class="link" data-go="demandes" style="padding:0">Faire une demande</button>'}</p>`;
+  posts.filter(c => c.status === 'a_signer').forEach(c => mountPad('pad-' + c.id));
+  $('conv-box').querySelectorAll('[data-sign]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.sign, err = b.nextElementSibling;
+    if (pads['pad-' + id].isEmpty()) { err.textContent = 'Signez dans le cadre ci-dessus.'; return; }
+    const { error } = await sb.rpc('sign_convention', { p_id: id, p_signature: pads['pad-' + id].toDataURL() });
+    if (error) { err.textContent = rpcErr(error); return; }
+    notify('convention', id); toast('Convention signée — le bureau va la contresigner'); renderConventions();
+  });
+  document.querySelectorAll('#charte-box [data-print], #conv-box [data-print]').forEach(b => b.onclick = () => GRAH.printDoc(convDoc(convs.find(c => c.id === b.dataset.print))));
+}
+
+const ART_PUBLIC = SB_URL + '/storage/v1/object/public/artistes/';
+const AS = { brouillon: ['Brouillon', 'g'], soumis: ['En attente du bureau', 'y'], publie: ['En ligne', 'a'], refuse: ['À revoir', 'p'], retire: ['Retirée du site', 'g'] };
+let art = null;
+async function renderArtist() {
+  if (!isActif()) {
+    $('artist-box').innerHTML = `<p class="note" style="margin-top:0">La présentation sur le site est réservée aux membres actifs (règlement intérieur, art. 5). <button class="link" data-go="demandes" style="padding:0">Devenir membre actif·ve</button></p>`;
+    return;
+  }
+  const { data } = await sb.rpc('my_artist');
+  art = data || { name: me.name, discipline: '', bio: '', website: '', instagram: '', photo: '', status: 'brouillon' };
+  const st = data ? AS[data.status] : null;
+  $('artist-box').innerHTML = `
+    <p class="note" style="margin-top:0">Votre fiche apparaît dans « Artistes membres » sur grah-network.com après validation par le bureau.${st ? ` Statut : <span class="badge ${st[1]}">${st[0]}</span>` : ''}</p>
+    ${data && data.review_note && data.status === 'refuse' ? `<p class="box soft" style="font-size:14px"><b>Bureau :</b> ${esc(data.review_note)}</p>` : ''}
+    ${data && data.published && data.status !== 'publie' && data.status !== 'retire' ? '<p class="note">La version déjà validée reste en ligne jusqu’à la validation de vos changements.</p>' : ''}
+    <div class="photo-row field" style="margin-top:12px"><div class="art-photo" id="a-thumb"></div>
+      <div class="acts"><span class="label" style="margin:0">Image (portrait ou œuvre)</span><button class="link" id="a-photo-btn">Choisir une image</button><input type="file" id="a-photo" accept="image/*" hidden></div></div>
+    <div class="field"><label for="a-name">Nom d'artiste</label><input class="input" id="a-name" maxlength="80"></div>
+    <div class="field"><label for="a-disc">Discipline(s)</label><input class="input" id="a-disc" maxlength="120" placeholder="Sculpture, dessin, vidéo…"></div>
+    <div class="field"><label for="a-bio">Présentation</label><textarea class="input" id="a-bio" maxlength="700"></textarea><div class="count" id="a-count"></div></div>
+    <div class="field"><label for="a-web">Site internet <span style="font-weight:400;color:var(--grey)">(facultatif)</span></label><input class="input" id="a-web" type="url" placeholder="https://"></div>
+    <div class="field"><label for="a-ig">Instagram <span style="font-weight:400;color:var(--grey)">(facultatif)</span></label><input class="input" id="a-ig" placeholder="@compte"></div>
+    <div class="btnrow"><button class="btn ghost" id="a-save"><span>Enregistrer</span></button><button class="btn yellow" id="a-submit"><span>Envoyer pour publication</span></button></div>
+    ${data && data.published ? '<p style="text-align:center;margin-top:10px"><button class="link" id="a-withdraw">Retirer ma fiche du site</button></p>' : ''}
+    <p class="err" id="a-err" role="alert"></p>`;
+  $('a-name').value = art.name || ''; $('a-disc').value = art.discipline || ''; $('a-bio').value = art.bio || '';
+  $('a-web').value = art.website || ''; $('a-ig').value = art.instagram ? '@' + art.instagram : '';
+  const cnt = () => $('a-count').textContent = $('a-bio').value.length + ' / 700'; $('a-bio').oninput = cnt; cnt();
+  const thumb = () => $('a-thumb').innerHTML = art.photo ? `<img src="${ART_PUBLIC + esc(art.photo)}" alt="">` : '';
+  thumb();
+  $('a-photo-btn').onclick = () => $('a-photo').click();
+  $('a-photo').onchange = async () => {
+    const f = $('a-photo').files[0]; $('a-photo').value = ''; if (!f) return;
+    try {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(f); });
+      const S = 900, r = Math.max(S / img.width, S / img.height), cv = document.createElement('canvas'); cv.width = S; cv.height = S;
+      cv.getContext('2d').drawImage(img, (S - img.width * r) / 2, (S - img.height * r) / 2, img.width * r, img.height * r);
+      const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.84));
+      const path = `${session.user.id}/artiste-${Date.now()}.jpg`;
+      const up = await sb.storage.from('artistes').upload(path, blob, { contentType: 'image/jpeg' });
+      if (up.error) throw up.error;
+      art.photo = path; thumb(); toast('Image ajoutée — pensez à enregistrer');
+    } catch (e) { toast('Image impossible : ' + (e.message || e), 4000); }
+  };
+  const save = async submit => {
+    $('a-err').textContent = '';
+    const { data: d, error } = await sb.rpc('save_my_artist', { p: { name: $('a-name').value, discipline: $('a-disc').value, bio: $('a-bio').value, website: $('a-web').value, instagram: $('a-ig').value, photo: art.photo || '' }, p_submit: submit });
+    if (error) { $('a-err').textContent = rpcErr(error); return; }
+    if (submit) notify('artist', d.member_id);
+    toast(submit ? 'Fiche envoyée au bureau' : 'Enregistré'); renderArtist();
+  };
+  $('a-save').onclick = () => save(false);
+  $('a-submit').onclick = () => save(true);
+  if ($('a-withdraw')) $('a-withdraw').onclick = async () => {
+    if (!confirm('Retirer votre fiche du site ?')) return;
+    const { error } = await sb.rpc('withdraw_my_artist'); if (error) toast(rpcErr(error), 4000); else { toast('Fiche retirée du site'); renderArtist(); }
+  };
+}
+
+/* ───────── Profil : lettre d'information ───────── */
+async function loadNewsletter() {
+  $('nl-state').textContent = '(vérification…)';
+  try { const d = await grahFn({ action: 'nl_status' }); $('nl-on').checked = !!d.subscribed; $('nl-on').disabled = false; $('nl-state').textContent = ''; }
+  catch (e) { $('nl-state').textContent = '(indisponible pour le moment)'; }
+}
+$('nl-on').onchange = async () => {
+  const on = $('nl-on').checked; $('nl-on').disabled = true;
+  try { const d = await grahFn({ action: 'nl_set', on }); $('nl-on').checked = !!d.subscribed; toast(d.subscribed ? 'Inscrit·e à la lettre' : 'Désinscrit·e de la lettre'); }
+  catch (e) { $('nl-on').checked = !on; toast('Impossible pour le moment : ' + e.message, 4000); }
+  $('nl-on').disabled = false;
 };
 
 /* ───────── Démarrage ───────── */
