@@ -96,6 +96,15 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 .photo-row .thumb { width: 72px; height: 90px; border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; background: var(--soft); flex-shrink: 0; }
 .photo-row .thumb img, .photo-row .thumb svg { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-row .acts { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.camp { display: flex; gap: 14px; align-items: stretch; border: 2px solid var(--ink); border-radius: var(--r); overflow: hidden; text-decoration: none; color: inherit; margin-top: 10px; }
+.camp:hover { box-shadow: 3px 3px 0 var(--ink); }
+.camp .cover { width: 38%; flex-shrink: 0; background: var(--yellow); border-right: 2px solid var(--ink); }
+.camp .cover img { width: 100%; height: 100%; object-fit: cover; display: block; aspect-ratio: 16 / 10; }
+.camp .body { padding: 10px 12px 12px 0; min-width: 0; }
+.camp b { display: block; font-size: 16px; line-height: 1.2; }
+.camp p { font-size: 13.5px; color: var(--grey); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.camp .go { font-size: 13.5px; font-weight: 800; margin-top: 6px; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 420px) { .camp { flex-direction: column; gap: 0; } .camp .cover { width: 100%; border-right: none; border-bottom: 2px solid var(--ink); } .camp .body { padding: 10px 12px 12px; } }
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 700; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
 .toast.show { opacity: 1; }
 
@@ -208,6 +217,11 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 
     <h2>Vos avantages</h2>
     <ul class="benefits" id="benefits"></ul>
+
+    <div id="camps-box" hidden>
+      <h2>Projets à soutenir</h2>
+      <div id="camps"></div>
+    </div>
 
     <h2>Mes informations</h2>
     <div class="photo-row field">
@@ -345,6 +359,19 @@ async function photoData(path) {
     return await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(data); });
   } catch (e) { return ''; }
 }
+// Campagnes de financement participatif publiques (HelloAsso) — masquées s'il n'y en a pas
+async function loadCampaigns() {
+  try {
+    const r = await fetch(FN_URL + '?action=campaigns');
+    const d = r.ok ? await r.json() : null;
+    const cs = (d?.campaigns || []).filter(c => /^https:\/\//.test(c.url || ''));
+    $('camps').innerHTML = cs.map(c => `<a class="camp" href="${esc(c.url)}" target="_blank" rel="noopener">
+      <div class="cover">${/^https:\/\//.test(c.image || '') ? `<img src="${esc(c.image)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</div>
+      <div class="body"><b>${esc(c.title)}</b>${c.summary ? `<p>${esc(c.summary)}</p>` : ''}
+      <div class="go">Soutenir sur HelloAsso${c.end ? ' · jusqu’au ' + esc(new Date(c.end).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', timeZone: 'Europe/Paris' })) : ''}</div></div></a>`).join('');
+    $('camps-box').hidden = !cs.length;
+  } catch (e) { /* hors ligne : on n'affiche rien */ }
+}
 async function renderMember(cachedPhoto) {
   show('v-member');
   const valid = isValid(me);
@@ -365,6 +392,7 @@ async function renderMember(cachedPhoto) {
   const lst = me.category === 'bienfaiteur' ? [...BEN.open, 'Voix consultative à l’assemblée générale']
     : (me.category === 'actif' || me.category === 'founder') ? [...BEN.open, ...BEN.member, ...BEN.active] : [...BEN.open, ...BEN.member];
   $('benefits').innerHTML = lst.map(b => `<li>${esc(b)}</li>`).join('');
+  if (!loadCampaigns.done) { loadCampaigns.done = true; loadCampaigns(); }
   // infos
   $('p-email').value = me.email; $('p-phone').value = me.phone || ''; $('p-address').value = me.address || '';
   $('p-heb').checked = !!me.heb; $('p-heb-date').textContent = me.heb && me.heb_date ? `(accord du ${fmtDate(me.heb_date)})` : '';
