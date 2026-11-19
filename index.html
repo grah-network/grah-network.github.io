@@ -118,8 +118,19 @@ section.block.soft { background: var(--soft); }
 .support { margin-top: 48px; padding-top: 28px; border-top: 2px solid var(--ink); }
 .support h3.support-title { font-size: clamp(24px, 2.6vw, 30px); font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; }
 .support p.support-lead { font-size: 16px; margin-top: 8px; max-width: 40em; }
-.camps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 22px; }
-.camp { border: 2.5px solid var(--ink); border-radius: var(--r); background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+.support-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.slide-nav { display: flex; gap: 10px; }
+.slide-nav button { width: 46px; height: 42px; border: 2.5px solid var(--ink); border-radius: 6px; background: var(--paper); transform: skewX(-9deg); cursor: pointer; display: grid; place-items: center; transition: transform .12s, box-shadow .12s; color: var(--ink); }
+.slide-nav button svg { transform: skewX(9deg); width: 18px; height: 18px; }
+.slide-nav button:hover:not(:disabled) { box-shadow: 3px 3px 0 var(--ink); transform: skewX(-9deg) translate(-2px,-2px); background: var(--yellow); }
+.slide-nav button:disabled { opacity: .3; cursor: default; }
+/* une seule rangée qui défile horizontalement (glisser, molette, flèches) */
+.camps { display: flex; gap: 18px; margin-top: 22px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; padding: 2px 2px 12px; scrollbar-width: thin; scrollbar-color: var(--ink) transparent; }
+.camps::-webkit-scrollbar { height: 6px; }
+.camps::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 3px; }
+.camp { flex: 0 0 calc((100% - 18px) / 2); scroll-snap-align: start; border: 2.5px solid var(--ink); border-radius: var(--r); background: var(--paper); overflow: hidden; display: flex; flex-direction: column; }
+.camps.many .camp { flex-basis: calc((100% - 36px) / 2.2); }
+.camps.one .camp { flex-basis: min(100%, 560px); }
 .camp .cover { aspect-ratio: 16 / 9; background: var(--yellow); border-bottom: 2.5px solid var(--ink); overflow: hidden; }
 .camp .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .camp .body { padding: 20px 22px 22px; display: flex; flex-direction: column; flex: 1; }
@@ -127,7 +138,6 @@ section.block.soft { background: var(--soft); }
 .camp p { font-size: 15.5px; margin-top: 8px; }
 .camp .until { font-size: 14px; font-weight: 700; margin-top: 12px; }
 .camp .btns { margin-top: auto; padding-top: 16px; }
-.camps.one { grid-template-columns: minmax(0, 560px); }
 
 /* Tableau Participer */
 .table-wrap { border: 2.5px solid var(--ink); border-radius: var(--r); overflow: hidden; background: var(--paper); }
@@ -211,7 +221,7 @@ details.legal p + p { margin-top: 8px; }
   body { font-size: 16px; }
   .hero .wrap { grid-template-columns: 1fr; }
   .hero-logo { order: -1; max-width: 340px; }
-  .facts, .ways, .cards, .camps, .tiers, .steps, .rules, .host, .contact { grid-template-columns: 1fr; }
+  .facts, .ways, .cards, .tiers, .steps, .rules, .host, .contact { grid-template-columns: 1fr; }
   .fact + .fact { border-left: none; border-top: 2px solid var(--ink); }
   table.adv { font-size: 14.5px; }
   table.adv th, table.adv td { padding: 10px 8px; }
@@ -221,9 +231,12 @@ details.legal p + p { margin-top: 8px; }
   table.adv td:first-child, table.adv th:first-child { padding-left: 14px; }
   .dot { width: 12px; height: 12px; }
   footer .cols { grid-template-columns: 1fr; }
+  .camps .camp, .camps.many .camp { flex-basis: 86%; }
+  .camps.one .camp { flex-basis: 100%; }
+  .camp h4 { font-size: 20px; }
   .btn { font-size: 16px; padding: 11px 20px; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+@media (prefers-reduced-motion: reduce) { html, .camps { scroll-behavior: auto; } .btn, .slide-nav button { transition: none; } }
 @media print { .top { position: static; } .btn:hover { box-shadow: none; } }
 </style>
 </head>
@@ -330,9 +343,17 @@ details.legal p + p { margin-top: 8px; }
       <p class="also">Et aussi : des rencontres, des projections et des événements ponctuels. L'actualité est sur Instagram, <a href="https://www.instagram.com/grah_network/" rel="noopener">@grah_network</a>.</p>
 
       <div class="support" id="soutenir" hidden>
-        <h3 class="support-title"><span class="mark pink">Projets à soutenir</span></h3>
-        <p class="support-lead">Nos campagnes de financement participatif en cours. Le paiement se fait sur HelloAsso, la plateforme des associations.</p>
-        <div class="camps" id="camps"></div>
+        <div class="support-head">
+          <div>
+            <h3 class="support-title"><span class="mark pink">Projets à soutenir</span></h3>
+            <p class="support-lead">Nos campagnes de financement participatif en cours. Le paiement se fait sur HelloAsso, la plateforme des associations.</p>
+          </div>
+          <div class="slide-nav" id="camps-nav" hidden>
+            <button type="button" id="camps-prev" aria-label="Campagne précédente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="currentColor" stroke-width="3"/></svg></button>
+            <button type="button" id="camps-next" aria-label="Campagne suivante"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 8 8-8 8" fill="none" stroke="currentColor" stroke-width="3"/></svg></button>
+          </div>
+        </div>
+        <div class="camps" id="camps" tabindex="0" aria-label="Campagnes en cours"></div>
       </div>
     </div>
   </div>
@@ -557,8 +578,22 @@ details.legal p + p { margin-top: 8px; }
       link.setAttribute('aria-label', 'Soutenir \u00ab ' + c.title + ' \u00bb sur HelloAsso (nouvel onglet)');
       bt.appendChild(link); b.appendChild(bt); a.appendChild(b); list.appendChild(a);
     });
-    if (cs.length === 1) list.classList.add('one');
+    list.classList.add(cs.length === 1 ? 'one' : cs.length > 2 ? 'many' : 'two');
     box.hidden = false;
+    // flèches : visibles seulement si la rangée dépasse, désactivées aux extrémités
+    var nav = document.getElementById('camps-nav'), prev = document.getElementById('camps-prev'), next = document.getElementById('camps-next');
+    function step() { var c = list.querySelector('.camp'); return c ? c.getBoundingClientRect().width + 18 : list.clientWidth; }
+    function upd() {
+      var max = list.scrollWidth - list.clientWidth;
+      nav.hidden = max < 4;
+      prev.disabled = list.scrollLeft < 4;
+      next.disabled = list.scrollLeft > max - 4;
+    }
+    prev.onclick = function () { list.scrollBy({ left: -step() }); };
+    next.onclick = function () { list.scrollBy({ left: step() }); };
+    list.addEventListener('scroll', function () { window.requestAnimationFrame(upd); }, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
     document.getElementById('hero-soutenir').hidden = false;
   }).catch(function () {});
 })();
