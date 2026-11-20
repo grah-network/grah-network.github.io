@@ -45,6 +45,9 @@ textarea.input { min-height: 90px; resize: vertical; line-height: 1.45; }
 .btn > span { display: inline-block; transform: skewX(9deg); }
 .btn.yellow { background: var(--yellow); } .btn.black { background: var(--ink); color: var(--paper); } .btn.pink { background: var(--pink); }
 .btn:disabled { opacity: .5; cursor: default; }
+.btn { transition: transform .12s, box-shadow .12s; }
+.btn:not(:disabled):hover { box-shadow: 4px 4px 0 var(--ink); transform: skewX(-9deg) translate(-2px,-2px); }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
 .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
 .link { background: none; border: none; font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; color: inherit; padding: 2px; }
 .err { color: var(--danger); font-size: 14px; margin-top: 6px; min-height: 1.1em; }

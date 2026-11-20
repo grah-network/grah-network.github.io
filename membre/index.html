@@ -57,6 +57,9 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 .btn.yellow { background: var(--yellow); color: var(--ink); }
 .btn.ghost { background: var(--paper); color: var(--ink); }
 .btn:disabled { opacity: .5; cursor: default; }
+.btn { transition: transform .12s, box-shadow .12s; }
+.btn:not(:disabled):hover { box-shadow: 4px 4px 0 var(--ink); transform: skewX(-9deg) translate(-2px,-2px); }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
 .err { color: var(--danger); font-size: 14px; margin-top: 10px; min-height: 1.2em; }
 .note { font-size: 14px; color: var(--grey); margin-top: 10px; }
 .box { border: 2px solid var(--ink); border-radius: var(--r); padding: 16px; margin-top: 8px; }
