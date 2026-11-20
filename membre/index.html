@@ -105,6 +105,15 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 .camp b { display: block; font-size: 16px; line-height: 1.2; }
 .camp p { font-size: 13.5px; color: var(--grey); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .camp .go { font-size: 13.5px; font-weight: 800; margin-top: auto; padding-top: 8px; text-decoration: underline; text-underline-offset: 3px; }
+/* aperçu bureau : voir l'espace comme un autre type de membre */
+.pv { border: 2px dashed var(--ink); border-radius: var(--r); padding: 10px 12px; margin: -6px 0 18px; font-size: 13.5px; }
+.pv .l { font-weight: 800; margin-bottom: 6px; display: block; }
+.pv .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.pv button { font: inherit; font-size: 13px; font-weight: 700; padding: 4px 10px; border: 2px solid var(--ink); border-radius: 999px; background: var(--paper); cursor: pointer; }
+.pv button.on { background: var(--ink); color: var(--paper); }
+.pv .msg { margin-top: 6px; color: var(--grey); }
+body.previewing .pv { background: repeating-linear-gradient(-45deg, var(--yellow) 0 10px, #FFF59A 10px 20px); }
+body.previewing .pv .msg { color: var(--ink); font-weight: 700; }
 /* onglets */
 .tabs { display: flex; gap: 4px; margin: -8px 0 20px; border-bottom: 2px solid var(--ink); overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -210,6 +219,11 @@ select.input { appearance: auto; }
 
   <!-- 3. Membre -->
   <section id="v-member" hidden>
+    <div class="pv" id="pv" hidden>
+      <span class="l">Aperçu (bureau) : voir l'espace comme…</span>
+      <div class="chips" id="pv-chips"></div>
+      <p class="msg" id="pv-msg">Choisissez un type de membre pour voir son espace. Rien n'est enregistré en mode aperçu.</p>
+    </div>
     <nav class="tabs" id="tabs" aria-label="Rubriques de l'espace membre">
       <button data-tab="carte" class="on">Ma carte</button>
       <button data-tab="vie">Vie de l'asso<span class="dot" id="dot-vie" hidden></span></button>
@@ -347,7 +361,7 @@ function fmtDate(d) { if (!d) return '—'; const [y, m, j] = d.slice(0, 10).spl
 function todayParis() { return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date()); }
 function isValid(c) { return !!(c && c.valid_until && c.valid_until >= todayParis() && c.active); }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
-function saveCache() { try { localStorage.setItem(CACHE, JSON.stringify({ me, photoData: $('c-photo').dataset.data || '' })); } catch (e) {} }
+function saveCache() { if (typeof PREVIEW !== 'undefined' && PREVIEW) return; try { localStorage.setItem(CACHE, JSON.stringify({ me, photoData: $('c-photo').dataset.data || '' })); } catch (e) {} }
 function loadCache() { try { return JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (e) { return null; } }
 
 /* ───────── Connexion ───────── */
@@ -464,6 +478,8 @@ async function renderMember(cachedPhoto) {
   $('c-photo').innerHTML = $('p-thumb').innerHTML = pd ? `<img src="${pd}" alt="">` : SILHOUETTE;
   $('btn-photo-del').hidden = !me.photo;
   $('lnk-compta').hidden = $('lnk-bureau').hidden = !me.is_bureau;
+  $('pv').hidden = !(me.is_bureau || (typeof realMe !== 'undefined' && realMe && realMe.is_bureau));
+  if (!$('pv').hidden && !$('pv-chips').children.length) previewChips();
   // avantages
   const lst = me.category === 'bienfaiteur' ? [...BEN.open, 'Voix consultative à l’assemblée générale']
     : (me.category === 'actif' || me.category === 'founder') ? [...BEN.open, ...BEN.member, ...BEN.active] : [...BEN.open, ...BEN.member];
@@ -832,6 +848,7 @@ async function renderArtist() {
 
 /* ───────── Profil : lettre d'information ───────── */
 async function loadNewsletter() {
+  if (PREVIEW) { $('nl-on').checked = false; $('nl-on').disabled = false; $('nl-state').textContent = ''; return; }
   $('nl-state').textContent = '(vérification…)';
   try { const d = await grahFn({ action: 'nl_status' }); $('nl-on').checked = !!d.subscribed; $('nl-on').disabled = false; $('nl-state').textContent = ''; }
   catch (e) { $('nl-state').textContent = '(indisponible pour le moment)'; }
@@ -843,6 +860,66 @@ $('nl-on').onchange = async () => {
   $('nl-on').disabled = false;
 };
 
+/* ───────── Aperçu pour le bureau ─────────
+   Un membre du bureau peut afficher l'espace tel que le voit un autre type de membre.
+   Données d'exemple, aucune action enregistrée (boutons, cases et envois bloqués). */
+let PREVIEW = null, realMe = null;
+const PV = {
+  adherent:    { label: 'Adhérent·e', set: { category: 'adherent', tarif: 'normal' } },
+  etudiant:    { label: 'Étudiant·e', set: { category: 'adherent', tarif: 'student' } },
+  actif:       { label: 'Actif·ve', set: { category: 'actif', tarif: 'normal' } },
+  bienfaiteur: { label: 'Bienfaiteur·rice', set: { category: 'bienfaiteur', tarif: 'normal' } },
+  renouveler:  { label: 'Cotisation à renouveler', set: { category: 'adherent', tarif: 'normal', valid_until: (+todayParis().slice(0, 4) - 1) + '-12-31' } },
+  nouveau:     { label: 'Nouveau, sans cotisation', set: { category: 'adherent', tarif: 'normal', valid_until: null, member_no: '', card_token: '' } },
+};
+const realRpc = sb.rpc.bind(sb);
+sb.rpc = (fn, args) => {
+  if (PREVIEW) {
+    const fake = {
+      my_requests: () => [], my_conventions: () => [], my_artist: () => null,
+      my_assemblies: async () => {
+        const { data } = await realRpc('my_assemblies');
+        return (data || []).map(a => ({ ...a, can_vote: me.category !== 'bienfaiteur' && isValid(me), answer: '', proxy_to: '', proxy_name: null, holding: null }));
+      },
+    }[fn];
+    if (fake) return Promise.resolve(fake()).then(data => ({ data, error: null }));
+  }
+  return realRpc(fn, args);
+};
+function previewChips() {
+  $('pv-chips').innerHTML = `<button data-pv="">Ma vue</button>` + Object.entries(PV).map(([k, v]) => `<button data-pv="${k}">${v.label}</button>`).join('');
+  $('pv-chips').querySelectorAll('button').forEach(b => {
+    b.classList.toggle('on', (b.dataset.pv || null) === PREVIEW);
+    b.onclick = () => setPreview(b.dataset.pv || null);
+  });
+}
+async function setPreview(kind) {
+  if (!realMe) realMe = me;
+  PREVIEW = kind;
+  const Y = +todayParis().slice(0, 4);
+  me = kind ? {
+    ...realMe, name: 'Camille EXEMPLE', role: 'none', member_no: 'GRAH-' + Y + '-000', card_token: '', photo: '',
+    joined: Y + '-03-01', valid_until: Y + '-12-31', active: true, pending: false, heb: false, heb_date: null, phone: '', address: '',
+    email: 'camille@exemple.fr', is_bureau: false, ...PV[kind].set,
+  } : realMe;
+  if (!kind) realMe = null;
+  document.body.classList.toggle('previewing', !!kind);
+  $('pv-msg').textContent = kind ? `Aperçu : vous voyez l'espace d'un·e membre « ${PV[kind].label} ». Rien n'est enregistré.` : 'Choisissez un type de membre pour voir son espace. Rien n’est enregistré en mode aperçu.';
+  Object.keys(loaded).forEach(k => delete loaded[k]);
+  ['req-msg'].forEach(i => $(i).value = '');
+  await renderMember(kind ? '' : undefined);
+  const cur = document.querySelector('#tabs button.on')?.dataset.tab || 'carte';
+  openTab(cur);
+  previewChips();
+}
+// en aperçu : bloquer tout ce qui enregistre ou envoie (la navigation reste possible)
+document.addEventListener('click', e => {
+  if (!PREVIEW) return;
+  const t = e.target.closest('#v-member button, #v-member input[type=checkbox], #v-member input[type=file], #v-member label.check');
+  if (!t || t.closest('#tabs, #pv, [data-go], [data-clear]') || t.id === 'btn-print') return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  toast('Aperçu : action désactivée');
+}, true);
 /* ───────── Démarrage ───────── */
 (async () => {
   $('test-banner').hidden = !TEST_MODE;
