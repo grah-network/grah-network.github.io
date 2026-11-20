@@ -63,14 +63,21 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 .box.soft { border: none; background: var(--soft); }
 
 /* ── Carte de membre (format carte d'identité 85,6 × 54 mm) ── */
-.card { position: relative; aspect-ratio: 85.6 / 54; width: 100%; border: 2.5px solid var(--ink); border-radius: 14px; background: var(--paper); overflow: hidden; container-type: inline-size; user-select: none; -webkit-user-select: none; }
-.card .stripe { position: absolute; right: -6%; top: -30%; width: 34%; height: 160%; background: var(--yellow); transform: skewX(-9deg); }
+.card { position: relative; aspect-ratio: 85.6 / 54; width: 100%; border: 2.5px solid var(--ink); border-radius: 14px; overflow: hidden; container-type: inline-size; user-select: none; -webkit-user-select: none;
+  background: linear-gradient(165deg, #F6F6F5 0%, #EDEDEB 50%, #DFDFDC 100%);
+  box-shadow: 0 1.5px 2px rgba(0,0,0,.12), 0 6px 10px -2px rgba(0,0,0,.18), 0 16px 26px -10px rgba(0,0,0,.35); }
+/* reflet : bandes claires en diagonale, derrière le texte et le QR (lisibilité intacte) */
+.card .gloss { position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(160deg, transparent 0 30%, rgba(255,255,255,.95) 38%, #fff 42%, rgba(255,255,255,.6) 48%, transparent 57%),
+    linear-gradient(160deg, transparent 0 60%, rgba(255,255,255,.75) 63%, transparent 68%),
+    radial-gradient(90% 70% at 92% -15%, rgba(255,255,255,.95), transparent 60%); }
 .card .in { position: absolute; inset: 0; padding: 4.5cqw 5cqw 6.2cqw; display: grid; grid-template-columns: 24cqw 1fr; grid-template-rows: auto 1fr auto; column-gap: 4.5cqw; }
-.card .photo { grid-row: 1 / 3; width: 24cqw; aspect-ratio: 4 / 5; border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; background: var(--soft); }
+.card .photo { grid-row: 1 / 3; width: 24cqw; aspect-ratio: 4 / 5; border-radius: 1.2cqw; overflow: hidden; background: #E3E4E8; }
 .card .photo img, .card .photo svg { width: 100%; height: 100%; object-fit: cover; display: block; }
-.card .head { display: flex; justify-content: space-between; align-items: flex-start; }
+.card .head { display: flex; justify-content: space-between; align-items: flex-start; padding-right: 24cqw; min-height: 8cqw; }
 .card .kind { font-size: 3.1cqw; font-weight: 800; letter-spacing: .08em; }
-.card .glogo { height: 7.5cqw; width: auto; position: relative; }
+.card .glogo { position: absolute; top: 3.4cqw; right: 4cqw; height: 10.5cqw; width: auto; z-index: 1; }
 .card .who { align-self: center; }
 .card .name { font-size: 6.2cqw; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; }
 .card .cat { font-size: 3.4cqw; margin-top: 1cqw; }
@@ -80,7 +87,7 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 .card .meta dd { display: inline; font-weight: 700; }
 .card .status { display: inline-block; margin-top: 1.2cqw; font-size: 3.3cqw; font-weight: 800; padding: .4cqw 1.6cqw; border: 2px solid var(--ink); border-radius: 4px; background: var(--yellow); }
 .card .status.off { background: var(--soft); color: var(--grey); border-color: var(--grey); }
-.card .qr { width: 19cqw; height: 19cqw; background: var(--paper); border: 2px solid var(--ink); border-radius: 4px; padding: .8cqw; position: relative; }
+.card .qr { width: 19cqw; height: 19cqw; padding: .6cqw; position: relative; }
 .card .qr svg { width: 100%; height: 100%; display: block; }
 .card .foot { position: absolute; left: 5cqw; right: 5cqw; bottom: 1.6cqw; font-size: 2.2cqw; color: var(--grey); display: flex; justify-content: space-between; }
 .card .live { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); }
@@ -149,7 +156,7 @@ select.input { appearance: auto; }
   @page { size: 85.6mm 54mm; margin: 0; }
   body * { visibility: hidden; }
   #card, #card * { visibility: visible; }
-  #card { position: fixed; left: 0; top: 0; width: 85.6mm; border-radius: 3mm; }
+  #card { position: fixed; left: 0; top: 0; width: 85.6mm; border-radius: 3mm; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .test-banner { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .card .spin { animation: none; } }
@@ -232,7 +239,7 @@ select.input { appearance: auto; }
     </nav>
     <div data-panel="carte">
     <div id="card" class="card" aria-label="Carte de membre">
-      <div class="stripe"></div>
+      <div class="gloss"></div>
       <div class="in">
         <div class="photo" id="c-photo"></div>
         <div class="head"><div class="kind">CARTE DE MEMBRE</div><svg class="glogo" viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></div>
@@ -346,7 +353,7 @@ const $ = id => document.getElementById(id);
 const sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'grah3-auth' } });
 let session = null, me = null, photoUrl = '', loginEmail = '';
 const CACHE = 'grah-membre-card';
-const SILHOUETTE = '<svg viewBox="0 0 80 100" aria-hidden="true"><rect width="80" height="100" fill="#F2F2F0"/><path d="M40 20c-9.5 0-16 7.2-16 17 0 8.6 5.4 17.5 16 17.5S56 45.6 56 37c0-9.8-6.5-17-16-17z" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 100c1.5-17 12-27.5 28-27.5S66.5 83 68 100" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round"/></svg>';
+const SILHOUETTE = '<svg viewBox="0 0 80 100" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EEEFF2"/><stop offset="1" stop-color="#C9CBD2"/></linearGradient></defs><rect width="80" height="100" fill="url(#sg)"/><circle cx="40" cy="39" r="16.5" fill="#F7F8FA"/><path d="M9 100c0-21 13.8-35 31-35s31 14 31 35z" fill="#F7F8FA"/></svg>';
 const CAT = { founder: 'Membre fondateur·rice', actif: 'Membre actif·ve', adherent: 'Membre adhérent·e', bienfaiteur: 'Membre bienfaiteur·rice' };
 const ROLE = { president: 'Président·e', treasurer: 'Trésorier·e', secretary: 'Secrétaire', vicepresident: 'Vice-président·e' };
 const BEN = {
