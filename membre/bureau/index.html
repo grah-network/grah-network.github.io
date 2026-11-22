@@ -231,12 +231,14 @@ const CAT = { founder: 'Fondateur·rice', actif: 'Actif·ve', adherent: 'Adhére
 function toast(m, ms = 2600) { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms); }
 const rpcErr = e => (e && e.message || String(e)).replace(/^.*?: /, '');
 async function rpc(fn, args) { const { data, error } = await sb.rpc(fn, args); if (error) throw new Error(rpcErr(error)); return data; }
+let lastVia = '';
 async function notify(type, id) {
   try {
     const { data: { session: s } } = await sb.auth.getSession();
     const r = await fetch(GRAH_FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + (s ? s.access_token : SB_KEY) }, body: JSON.stringify({ action: 'notify', type, id }) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(d.error || r.status);
+    lastVia = (d.via || []).join(', ');
     return d.mails || 0;
   } catch (e) { toast('Enregistré, mais e-mail non envoyé : ' + e.message, 5000); return 0; }
 }
@@ -593,7 +595,7 @@ async function loadEvents() {
     const on = (sel, fn) => box.querySelector(sel)?.addEventListener('click', fn);
     on('[data-edit]', () => { evForm(e); window.scrollTo({ top: 0, behavior: 'smooth' }); });
     on('[data-test]', async () => {
-      try { await rpc('event_test_invite', { p_event: e.id }); const n = await notify('event_test', e.id); toast(n ? 'E-mail test envoyé à votre adresse' : 'E-mail test non envoyé', 4000); }
+      try { await rpc('event_test_invite', { p_event: e.id }); const n = await notify('event_test', e.id); toast(n ? `E-mail test envoyé à votre adresse ${lastVia === 'ovh' ? '(depuis la boîte contact@ – OVH)' : '(par Brevo)'}` : 'E-mail test non envoyé', 6000); }
       catch (err) { toast(err.message, 5000); }
     });
     on('[data-publish]', async () => {
