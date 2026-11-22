@@ -152,6 +152,8 @@ body.previewing .pv .msg { color: var(--ink); font-weight: 700; }
 .item details { margin-top: 8px; font-size: 14px; }
 .item summary { cursor: pointer; font-weight: 700; }
 .pre { white-space: pre-wrap; }
+.rich p { margin: 0 0 8px; } .rich ul, .rich ol { margin: 0 0 8px; padding-left: 20px; } .rich a { color: inherit; text-decoration: underline; }
+.cal { margin-top: 8px; font-size: 14px; color: var(--grey); display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: baseline; } .cal .link { padding: 0; font-size: 14px; color: var(--ink); }
 .choice.sm { padding: 9px 12px; }
 .doctext { white-space: pre-wrap; font-size: 13.5px; line-height: 1.5; background: var(--soft); border-radius: var(--r); padding: 14px; max-height: 300px; overflow-y: auto; margin: 8px 0 12px; }
 .padbox { border: 2px dashed var(--ink); border-radius: var(--r); background: var(--paper); position: relative; }
@@ -672,10 +674,10 @@ async function renderEvents() {
         <h3>${esc(e.title)}</h3>
         <div class="when" style="font-size:15px">${esc(GRAH.evWhen(e))}</div>
         <div class="sub">${esc(e.place || 'Lieu précisé prochainement')}</div>
-        ${e.description ? `<details><summary>Présentation</summary><div class="pre" style="margin-top:6px">${esc(e.description)}</div></details>` : ''}
+        ${e.description ? `<details><summary>Présentation</summary><div class="rich" style="margin-top:6px">${GRAH.rich(e.description)}</div></details>` : ''}
         ${cancelled ? '' : `<div class="cnt">${esc(GRAH.evCounts(e))}${e.reply_by ? ' · réponse avant le ' + esc(GRAH.fmtDate(e.reply_by)) : ''}</div>`}
         ${cancelled || started ? '' : `<div class="ans">${ANS.map(([v, l]) => `<button data-a="${v}" class="${e.answer === v ? 'on' : ''}" ${closed && v !== 'non' ? 'disabled' : ''}>${l}</button>`).join('')}</div>
-        <p style="margin-top:8px"><button class="link" data-ics style="padding:0;font-size:14px">Ajouter à mon agenda</button></p>`}
+        <p class="cal">Ajouter à mon agenda : <a class="link" href="${esc(GRAH.gcal(e))}" target="_blank" rel="noopener">Google Agenda</a> <button class="link" data-ics>iPhone, Outlook… (.ics)</button></p>`}
         <p class="err" role="alert"></p>
       </div></div>`;
   }).join('');

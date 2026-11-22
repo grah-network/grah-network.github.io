@@ -40,6 +40,62 @@
     if (e.answer === 'non') return ['Vous ne venez pas', 'g'];
     return ['Pas encore répondu', 'p'];
   };
+  /* Texte mis en forme (présentation des événements) : seules quelques balises sont gardées */
+  G.RICH_COLORS = { '#000000': 'Noir', '#5e5e5b': 'Gris', '#e0218a': 'Rose', '#1c7fa6': 'Bleu' };
+  G.RICH_MARK = '#ffe800';
+  var hex = function (c) {
+    c = String(c || '').trim().toLowerCase();
+    var m = c.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+    if (m) return '#' + [m[1], m[2], m[3]].map(function (x) { return ('0' + Number(x).toString(16)).slice(-2); }).join('');
+    if (/^#[0-9a-f]{3}$/.test(c)) return '#' + c[1] + c[1] + c[2] + c[2] + c[3] + c[3];
+    return c;
+  };
+  G.rich = function (src) {
+    src = String(src || '');
+    if (!/<[a-z\/!]/i.test(src)) return G.esc(src).replace(/\r?\n/g, '<br>');
+    var doc = new DOMParser().parseFromString('<body>' + src + '</body>', 'text/html');
+    var SIMPLE = { B: 'b', STRONG: 'b', I: 'i', EM: 'i', U: 'u', P: 'p', DIV: 'div', UL: 'ul', OL: 'ol', LI: 'li' };
+    var walk = function (n) {
+      var out = '';
+      n.childNodes.forEach(function (c) {
+        if (c.nodeType === 3) { out += G.esc(c.nodeValue); return; }
+        if (c.nodeType !== 1) return;
+        var t = c.tagName, inner;
+        if (t === 'SCRIPT' || t === 'STYLE') return;
+        if (t === 'BR') { out += '<br>'; return; }
+        inner = walk(c);
+        // couleur, surligné, gras… posés en style sur n'importe quelle balise
+        var st = c.style, col = hex(st.color || c.getAttribute('color')), bg = hex(st.backgroundColor), css = '';
+        if (/bold|[6-9]00/.test(st.fontWeight) && !/^(B|STRONG)$/.test(t)) inner = '<b>' + inner + '</b>';
+        if (st.fontStyle === 'italic' && !/^(I|EM)$/.test(t)) inner = '<i>' + inner + '</i>';
+        if (/underline/.test(st.textDecoration || st.textDecorationLine) && t !== 'U') inner = '<u>' + inner + '</u>';
+        if (G.RICH_COLORS[col] && col !== '#000000') css += 'color:' + col + ';';
+        if (bg === G.RICH_MARK) css += 'background:' + G.RICH_MARK + ';';
+        if (css) inner = '<span style="' + css + '">' + inner + '</span>';
+        if (SIMPLE[t]) { out += '<' + SIMPLE[t] + '>' + inner + '</' + SIMPLE[t] + '>'; return; }
+        if (t === 'A') {
+          var h = (c.getAttribute('href') || '').trim();
+          out += /^(https?:\/\/|mailto:)/i.test(h) ? '<a href="' + G.esc(h) + '" target="_blank" rel="noopener">' + inner + '</a>' : inner; return;
+        }
+        out += inner;
+      });
+      return out;
+    };
+    return walk(doc.body).replace(/^(<br>|\s)+|(<br>|\s)+$/g, '');
+  };
+  G.richText = function (src) {
+    var d = document.createElement('div');
+    d.innerHTML = G.rich(src).replace(/<br>/g, '\n').replace(/<\/(p|div|li)>/g, '\n');
+    return d.textContent.replace(/\n{3,}/g, '\n\n').trim();
+  };
+  // lien « ajouter à Google Agenda »
+  G.gcal = function (e) {
+    var dt = function (d) { return new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+    var end = e.ends_at || new Date(new Date(e.starts_at).getTime() + 2 * 3600e3).toISOString();
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.title || '') +
+      '&dates=' + dt(e.starts_at) + '/' + dt(end) + '&location=' + encodeURIComponent(e.place || '') +
+      '&details=' + encodeURIComponent(G.richText(e.description).slice(0, 1200));
+  };
   // fichier .ics pour l'agenda du téléphone ou de l'ordinateur
   G.ics = function (e) {
     var dt = function (d) { return new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
@@ -47,7 +103,7 @@
     var end = e.ends_at || new Date(new Date(e.starts_at).getTime() + 2 * 3600e3).toISOString();
     var body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//GRAH//Evenements//FR', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
       'UID:' + e.id + '@grah-network.com', 'DTSTAMP:' + dt(new Date()), 'DTSTART:' + dt(e.starts_at), 'DTEND:' + dt(end),
-      'SUMMARY:' + tx(e.title), 'LOCATION:' + tx(e.place), 'DESCRIPTION:' + tx(e.description), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      'SUMMARY:' + tx(e.title), 'LOCATION:' + tx(e.place), 'DESCRIPTION:' + tx(G.richText(e.description)), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
     var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar;charset=utf-8' }));
     a.download = 'grah-' + String(e.title || 'evenement').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '.ics';

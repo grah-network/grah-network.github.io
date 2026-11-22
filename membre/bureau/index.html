@@ -41,6 +41,16 @@ h2 { font-size: 18px; font-weight: 800; margin: 26px 0 10px; }
 .field > label, .label { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 5px; }
 .input { width: 100%; font: inherit; font-size: 15px; padding: 10px 12px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--paper); color: var(--ink); }
 textarea.input { min-height: 90px; resize: vertical; line-height: 1.45; }
+.rte-bar { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-bottom: 6px; }
+.rte-bar button { font: inherit; font-size: 14px; min-width: 34px; height: 32px; padding: 0 8px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); cursor: pointer; }
+.rte-bar button:hover { background: var(--yellow); }
+.rte-bar .sw { min-width: 32px; padding: 0; } .rte-bar .sw i { display: block; width: 16px; height: 16px; border-radius: 50%; margin: auto; }
+.rte-bar .sep { width: 1px; height: 22px; background: var(--hair); margin: 0 4px; }
+#ev-colors { display: contents; }
+.rte-ed { min-height: 180px; line-height: 1.5; overflow-wrap: anywhere; }
+.rte-ed:empty::before { content: attr(data-ph); color: var(--grey); }
+.rte-ed:focus { outline: 3px solid var(--yellow); outline-offset: 1px; }
+.rich p { margin: 0 0 8px; } .rich ul, .rich ol { margin: 0 0 8px; padding-left: 22px; } .rich a { color: inherit; text-decoration: underline; }
 .btn { display: inline-block; text-align: center; font: inherit; font-weight: 800; font-size: 15px; padding: 9px 18px; border: 2.5px solid var(--ink); border-radius: 6px; background: var(--paper); color: var(--ink); cursor: pointer; transform: skewX(-9deg); }
 .btn > span { display: inline-block; transform: skewX(9deg); }
 .btn.yellow { background: var(--yellow); } .btn.black { background: var(--ink); color: var(--paper); } .btn.pink { background: var(--pink); }
@@ -106,7 +116,7 @@ table.t th { font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em
       <h2>Préparer un événement</h2>
       <div class="box">
         <input type="hidden" id="ev-id">
-        <div class="field"><label for="ev-title">Titre</label><input class="input" id="ev-title" maxlength="140" placeholder="Atelier pancartes"></div>
+        <div class="field"><label for="ev-title">Titre</label><input class="input" id="ev-title" maxlength="140"></div>
         <div class="grid3">
           <div class="field"><label for="ev-start">Début</label><input class="input" type="datetime-local" id="ev-start"></div>
           <div class="field"><label for="ev-end">Fin <span style="font-weight:400;color:var(--grey)">(facultatif)</span></label><input class="input" type="datetime-local" id="ev-end"></div>
@@ -119,7 +129,23 @@ table.t th { font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em
             <div class="field"><label for="ev-aud">Invité·es</label><select class="input" id="ev-aud"><option value="tous">Tous les membres à jour</option><option value="actifs">Membres actifs seulement</option></select></div>
           </div>
         </div>
-        <div class="field"><label for="ev-desc">Présentation</label><textarea class="input" id="ev-desc" maxlength="4000" placeholder="Ce que l'on fera, ce qu'il faut apporter…"></textarea></div>
+        <div class="field"><span class="label" id="ev-desc-l">Présentation</span>
+          <div class="rte">
+            <div class="rte-bar" id="ev-bar">
+              <button type="button" data-cmd="bold" title="Gras"><b>G</b></button>
+              <button type="button" data-cmd="italic" title="Italique"><i>I</i></button>
+              <button type="button" data-cmd="underline" title="Souligné"><u>S</u></button>
+              <span class="sep"></span>
+              <span id="ev-colors"></span>
+              <button type="button" data-cmd="mark" title="Surligner en jaune"><span style="background:#FFE800;padding:0 4px">ab</span></button>
+              <span class="sep"></span>
+              <button type="button" data-cmd="insertUnorderedList" title="Liste">• Liste</button>
+              <button type="button" data-cmd="link" title="Ajouter un lien">Lien</button>
+              <button type="button" data-cmd="unlink" title="Retirer le lien">Retirer le lien</button>
+              <button type="button" data-cmd="removeFormat" title="Effacer la mise en forme">Effacer</button>
+            </div>
+            <div class="input rte-ed rich" id="ev-desc" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="ev-desc-l" data-ph="Ce que l'on fera, ce qu'il faut apporter…"></div>
+          </div></div>
         <div class="field"><span class="label">Image <span style="font-weight:400;color:var(--grey)">(affiche ou photo, en haut de l'invitation)</span></span>
           <div class="art" style="align-items:center"><div id="ev-thumb"></div><div><button class="link" id="ev-img-btn">Choisir une image</button> <button class="link" id="ev-img-del" hidden>Retirer</button><input type="file" id="ev-img" accept="image/*" hidden></div></div></div>
         <div class="btns"><button class="btn yellow" id="ev-save"><span>Enregistrer le brouillon</span></button><button class="link" id="ev-reset">Nouvel événement</button></div>
@@ -471,12 +497,46 @@ function evForm(e) {
   $('ev-id').value = e ? e.id : ''; $('ev-title').value = e ? e.title : ''; $('ev-start').value = e ? dtIn(e.starts_at) : '';
   $('ev-end').value = e ? dtIn(e.ends_at) : ''; $('ev-replyby').value = e ? dtIn(e.reply_by) : '';
   $('ev-place').value = e ? e.place : 'Atelier GRAH, 10 Place Avogadro, 30900 Nîmes'; $('ev-cap').value = e && e.capacity ? e.capacity : '';
-  $('ev-aud').value = e ? e.audience : 'tous'; $('ev-desc').value = e ? e.description : '';
+  $('ev-aud').value = e ? e.audience : 'tous'; $('ev-desc').innerHTML = e ? GRAH.rich(e.description) : '';
   evImage = e ? e.image : ''; evThumb();
   $('ev-save').querySelector('span').textContent = !e ? 'Enregistrer le brouillon' : e.status === 'publie' ? 'Enregistrer les changements' : 'Enregistrer le brouillon';
   $('ev-err').textContent = '';
 }
 $('ev-reset').onclick = () => evForm(null);
+// petit éditeur : gras, italique, souligné, couleurs, surligné, liste, lien
+(() => {
+  const ed = $('ev-desc');
+  $('ev-colors').innerHTML = Object.entries(GRAH.RICH_COLORS).map(([c, n]) => `<button type="button" class="sw" data-color="${c}" title="Texte ${n.toLowerCase()}"><i style="background:${c}"></i></button>`).join('');
+  let range = null;
+  const keep = () => { const s = getSelection(); if (s.rangeCount && ed.contains(s.anchorNode)) range = s.getRangeAt(0).cloneRange(); };
+  const back = () => { ed.focus(); if (range) { const s = getSelection(); s.removeAllRanges(); s.addRange(range); } };
+  document.addEventListener('selectionchange', keep);
+  const css = (on) => document.execCommand('styleWithCSS', false, on);
+  $('ev-bar').addEventListener('mousedown', (ev) => { if (ev.target.closest('button')) ev.preventDefault(); });
+  $('ev-bar').addEventListener('click', (ev) => {
+    const b = ev.target.closest('button'); if (!b) return;
+    back();
+    if (b.dataset.color) { css(true); document.execCommand('foreColor', false, b.dataset.color); css(false); return; }
+    const c = b.dataset.cmd;
+    if (c === 'mark') { css(true); document.execCommand('hiliteColor', false, '#FFE800'); css(false); return; }
+    if (c === 'link') {
+      if (getSelection().isCollapsed) { toast('Sélectionnez d’abord le texte à transformer en lien', 4000); return; }
+      const saved = range; let url = (prompt('Adresse du lien (https://… ou adresse e-mail)') || '').trim();
+      if (!url) return;
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(url)) url = 'mailto:' + url; else if (!/^(https?:\/\/|mailto:)/i.test(url)) url = 'https://' + url;
+      range = saved; back(); document.execCommand('createLink', false, url); return;
+    }
+    if (c === 'removeFormat') { document.execCommand('removeFormat'); document.execCommand('unlink'); return; }
+    css(false); document.execCommand(c);
+  });
+  // coller sans la mise en forme d'origine (Word, sites…)
+  ed.addEventListener('paste', (ev) => { ev.preventDefault(); document.execCommand('insertText', false, ev.clipboardData.getData('text/plain')); });
+  ed.addEventListener('keydown', (ev) => {
+    if (!(ev.ctrlKey || ev.metaKey)) return;
+    const k = ev.key.toLowerCase(); if (k === 'b' || k === 'i' || k === 'u') { ev.preventDefault(); css(false); document.execCommand({ b: 'bold', i: 'italic', u: 'underline' }[k]); }
+  });
+  ed.addEventListener('input', () => { if (!ed.textContent.trim() && !ed.querySelector('li')) ed.innerHTML = ''; });
+})();
 $('ev-img-btn').onclick = () => $('ev-img').click();
 $('ev-img-del').onclick = () => { evImage = ''; evThumb(); };
 $('ev-img').onchange = async () => {
@@ -496,10 +556,12 @@ $('ev-save').onclick = async () => {
   $('ev-err').textContent = '';
   if ($('ev-title').value.trim().length < 2) { $('ev-err').textContent = 'Indiquez un titre.'; return; }
   if (!$('ev-start').value) { $('ev-err').textContent = 'Indiquez la date et l’heure de début.'; return; }
+  const desc = $('ev-desc').textContent.trim() ? GRAH.rich($('ev-desc').innerHTML) : '';
+  if (desc.length > 4000) { $('ev-err').textContent = 'La présentation est trop longue (raccourcissez le texte ou retirez un peu de mise en forme).'; return; }
   if ($('ev-end').value && $('ev-end').value < $('ev-start').value) { $('ev-err').textContent = 'La fin est avant le début.'; return; }
   try {
     const r = await rpc('save_event', { p: { id: $('ev-id').value, title: $('ev-title').value, starts_at: dtOut($('ev-start').value), ends_at: dtOut($('ev-end').value),
-      reply_by: dtOut($('ev-replyby').value), place: $('ev-place').value, capacity: $('ev-cap').value, audience: $('ev-aud').value, description: $('ev-desc').value, image: evImage } });
+      reply_by: dtOut($('ev-replyby').value), place: $('ev-place').value, capacity: $('ev-cap').value, audience: $('ev-aud').value, description: desc, image: evImage } });
     if (r.event.status === 'publie') await notify('event_promoted', r.event.id);   // la jauge a pu augmenter
     if (r.changed && confirm('La date, l’horaire ou le lieu ont changé. Prévenir les invité·es par e-mail ?')) {
       await rpc('bump_event_change', { p_id: r.event.id });
