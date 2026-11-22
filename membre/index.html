@@ -124,6 +124,19 @@ h2 { font-size: 19px; font-weight: 800; margin: 32px 0 10px; }
 .pv .msg { margin-top: 6px; color: var(--grey); }
 body.previewing .pv { background: repeating-linear-gradient(-45deg, var(--yellow) 0 10px, #FFF59A 10px 20px); }
 body.previewing .pv .msg { color: var(--ink); font-weight: 700; }
+/* événements */
+.ev { padding: 0; overflow: hidden; }
+.ev .cov { border-bottom: 2px solid var(--ink); background: var(--soft); }
+.ev .cov img { display: block; width: 100%; height: auto; max-height: 260px; object-fit: cover; }
+.ev .bd { padding: 14px 16px 16px; }
+.ev h3 { font-size: 19px; font-weight: 800; line-height: 1.2; margin: 6px 0 2px; }
+.ev .cnt { font-size: 13.5px; color: var(--grey); margin-top: 8px; }
+.ev .ans { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.ev .ans button { font: inherit; font-weight: 800; font-size: 14px; padding: 8px 12px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); cursor: pointer; }
+.ev .ans button.on { background: var(--yellow); }
+.ev .ans button:disabled { opacity: .4; cursor: default; }
+.ev.cancelled { border-color: var(--hair); }
+.ev.cancelled h3 { text-decoration: line-through; }
 /* onglets */
 .tabs { display: flex; gap: 4px; margin: -8px 0 20px; border-bottom: 2px solid var(--ink); overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
@@ -279,15 +292,19 @@ select.input { appearance: auto; }
     <h2>Vos avantages</h2>
     <ul class="benefits" id="benefits"></ul>
 
-    <div id="camps-box" hidden>
-      <h2>Projets à soutenir</h2>
-      <div class="camps" id="camps"></div>
-    </div>
     </div>
 
     <div data-panel="vie" hidden>
-      <h2 id="ag" style="margin-top:4px">Assemblées générales</h2>
+      <h2 id="evenements" style="margin-top:4px">Prochains événements</h2>
+      <div id="ev-list"><p class="note">Chargement…</p></div>
+
+      <h2 id="ag">Assemblées générales</h2>
       <div id="ag-list"><p class="note">Chargement…</p></div>
+
+    <div id="camps-box" hidden>
+      <h2 id="soutenir">Projets à soutenir</h2>
+      <div class="camps" id="camps"></div>
+    </div>
 
       <h2 id="demandes">Mes demandes</h2>
       <div id="req-list"></div>
@@ -590,7 +607,7 @@ $('btn-photo-del').onclick = async () => {
 };
 
 /* ───────── Onglets ───────── */
-const TAB_OF = { carte: 'carte', vie: 'vie', ag: 'vie', demandes: 'vie', atelier: 'atelier', artiste: 'atelier', convention: 'atelier', profil: 'profil' };
+const TAB_OF = { carte: 'carte', vie: 'vie', evenements: 'vie', soutenir: 'vie', ag: 'vie', demandes: 'vie', atelier: 'atelier', artiste: 'atelier', convention: 'atelier', profil: 'profil' };
 const loaded = {};
 function openTab(t, anchor) {
   if (t === 'atelier' && $('tab-atelier').hidden) t = 'carte';
@@ -610,7 +627,7 @@ function afterRender() {
     const h = location.hash.slice(1);
     if (TAB_OF[h]) openTab(TAB_OF[h], h);
     // pastille : une convocation sans réponse
-    sb.rpc('my_assemblies').then(({ data }) => { $('dot-vie').hidden = !(data || []).some(a => !a.answer); });
+    refreshDot();
     if (me.category !== 'bienfaiteur') sb.rpc('my_conventions').then(({ data }) => { $('dot-atelier').hidden = !(data || []).some(c => c.status === 'a_signer'); });
   }
 }
@@ -630,11 +647,55 @@ const rpcErr = e => (e && e.message || String(e)).replace(/^.*?: /, '');
 /* ───────── Vie de l'asso : assemblées ───────── */
 const AGK = { AGO: 'Assemblée générale ordinaire', AGE: 'Assemblée générale extraordinaire' };
 const ANS = { present: 'Je serai présent·e', absent: 'Je ne pourrai pas venir', pouvoir: 'Je confie mon pouvoir à un membre' };
-async function loadVie() { await Promise.all([renderAg(), renderRequests()]); }
+async function loadVie() { await Promise.all([renderEvents(), renderAg(), renderRequests()]); }
+async function refreshDot() {
+  const [a, e] = await Promise.all([sb.rpc('my_assemblies'), sb.rpc('my_events')]);
+  $('dot-vie').hidden = !((a.data || []).some(x => !x.answer) || (e.data || []).some(x => x.status === 'publie' && !x.answer));
+}
+
+/* ───────── Vie de l'asso : événements ───────── */
+let events = [];
+async function renderEvents() {
+  const { data, error } = await sb.rpc('my_events');
+  if (error) { $('ev-list').innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  events = data || [];
+  if (!events.length) { $('ev-list').innerHTML = '<p class="note">Aucun événement prévu pour le moment. Vous recevrez une invitation par e-mail.</p>'; return; }
+  const ANS = [['oui', 'Je viens'], ['peutetre', 'Peut-être'], ['non', 'Je ne viens pas']];
+  $('ev-list').innerHTML = events.map(e => {
+    const img = GRAH.evImg(e.image), st = GRAH.evState(e);
+    const cancelled = e.status === 'annule', started = new Date(e.starts_at) < new Date();
+    const closed = e.reply_by && new Date(e.reply_by) < new Date();
+    return `<div class="item ev ${cancelled ? 'cancelled' : ''}" data-ev="${e.id}">
+      ${img ? `<div class="cov"><img src="${esc(img)}" alt="" loading="lazy"></div>` : ''}
+      <div class="bd">
+        <div class="row">${e.status === 'brouillon' ? '<span class="badge p">Brouillon — visible par le bureau seulement</span>' : cancelled ? '<span class="badge g">Annulé</span>' : `<span class="badge ${st[1]}">${esc(st[0])}</span>`}</div>
+        <h3>${esc(e.title)}</h3>
+        <div class="when" style="font-size:15px">${esc(GRAH.evWhen(e))}</div>
+        <div class="sub">${esc(e.place || 'Lieu précisé prochainement')}</div>
+        ${e.description ? `<details><summary>Présentation</summary><div class="pre" style="margin-top:6px">${esc(e.description)}</div></details>` : ''}
+        ${cancelled ? '' : `<div class="cnt">${esc(GRAH.evCounts(e))}${e.reply_by ? ' · réponse avant le ' + esc(GRAH.fmtDate(e.reply_by)) : ''}</div>`}
+        ${cancelled || started ? '' : `<div class="ans">${ANS.map(([v, l]) => `<button data-a="${v}" class="${e.answer === v ? 'on' : ''}" ${closed && v !== 'non' ? 'disabled' : ''}>${l}</button>`).join('')}</div>
+        <p style="margin-top:8px"><button class="link" data-ics style="padding:0;font-size:14px">Ajouter à mon agenda</button></p>`}
+        <p class="err" role="alert"></p>
+      </div></div>`;
+  }).join('');
+  $('ev-list').querySelectorAll('[data-ev]').forEach(box => {
+    const e = events.find(x => x.id === box.dataset.ev);
+    box.querySelectorAll('[data-a]').forEach(b => b.onclick = async () => {
+      const wasIn = e.my_place === 'confirme';
+      const { data: v, error } = await sb.rpc('answer_event', { p_event: e.id, p_answer: b.dataset.a });
+      if (error) { box.querySelector('.err').textContent = rpcErr(error); return; }
+      if (wasIn && v.my_place !== 'confirme') notify('event_promoted', e.id);
+      toast(v.my_place === 'attente' ? 'Complet : vous êtes sur la liste d’attente' : 'Réponse enregistrée');
+      renderEvents(); refreshDot();
+    });
+    box.querySelector('[data-ics]')?.addEventListener('click', () => GRAH.ics(e));
+  });
+}
 async function renderAg() {
   const { data, error } = await sb.rpc('my_assemblies');
   if (error) { $('ag-list').innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
-  $('dot-vie').hidden = !data.some(a => !a.answer);
+  refreshDot();
   if (!data.length) { $('ag-list').innerHTML = '<p class="note">Aucune assemblée convoquée pour le moment. Vous recevrez la convocation par e-mail.</p>'; return; }
   const year = d => new Date(d).getFullYear();
   $('ag-list').innerHTML = data.map(a => {
@@ -887,6 +948,10 @@ sb.rpc = (fn, args) => {
   if (PREVIEW) {
     const fake = {
       my_requests: () => [], my_conventions: () => [], my_artist: () => null,
+      my_events: async () => {
+        const { data } = await realRpc('my_events');
+        return (data || []).filter(e => e.status !== 'brouillon').map(e => ({ ...e, answer: '', my_place: '', queue_pos: null }));
+      },
       my_assemblies: async () => {
         const { data } = await realRpc('my_assemblies');
         return (data || []).map(a => ({ ...a, can_vote: me.category !== 'bienfaiteur' && isValid(me), answer: '', proxy_to: '', proxy_name: null, holding: null }));

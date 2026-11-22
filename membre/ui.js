@@ -16,6 +16,44 @@
   };
   G.euro = function (v) { return v == null || v === '' ? '—' : new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(Number(v)); };
 
+  /* ── événements ── */
+  G.EV_IMG = 'https://gxwnkhebrgqscyiqymud.supabase.co/storage/v1/object/public/evenements/';
+  G.evImg = function (p) { return p ? G.EV_IMG + p.split('/').map(encodeURIComponent).join('/') : ''; };
+  G.evWhen = function (e) {
+    var t = function (d) { return new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }).format(new Date(d)).replace(':', ' h '); };
+    var s = G.fmtDateTime(e.starts_at);
+    if (e.ends_at) s += G.fmtDate(e.ends_at) === G.fmtDate(e.starts_at) ? ' – ' + t(e.ends_at) : ' → ' + G.fmtDateTime(e.ends_at);
+    return s;
+  };
+  // chiffres seulement (jamais de noms)
+  G.evCounts = function (e) {
+    var c = e.counts || {}, n = c.confirmes || 0;
+    if (!e.capacity) return n + (n > 1 ? ' inscrit·es' : ' inscrit·e');
+    var left = Math.max(0, e.capacity - n);
+    return left ? n + ' / ' + e.capacity + ' inscrit·es · ' + left + (left > 1 ? ' places restantes' : ' place restante')
+                : 'Complet' + (c.attente ? ' · ' + c.attente + ' en liste d’attente' : ' · liste d’attente ouverte');
+  };
+  G.evState = function (e) {
+    if (e.my_place === 'confirme') return ['Vous êtes inscrit·e', 'y'];
+    if (e.my_place === 'attente') return ['Liste d’attente' + (e.queue_pos ? ' (n° ' + e.queue_pos + ')' : ''), 'a'];
+    if (e.answer === 'peutetre') return ['Peut-être', ''];
+    if (e.answer === 'non') return ['Vous ne venez pas', 'g'];
+    return ['Pas encore répondu', 'p'];
+  };
+  // fichier .ics pour l'agenda du téléphone ou de l'ordinateur
+  G.ics = function (e) {
+    var dt = function (d) { return new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+    var tx = function (s) { return String(s || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;'); };
+    var end = e.ends_at || new Date(new Date(e.starts_at).getTime() + 2 * 3600e3).toISOString();
+    var body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//GRAH//Evenements//FR', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT',
+      'UID:' + e.id + '@grah-network.com', 'DTSTAMP:' + dt(new Date()), 'DTSTART:' + dt(e.starts_at), 'DTEND:' + dt(end),
+      'SUMMARY:' + tx(e.title), 'LOCATION:' + tx(e.place), 'DESCRIPTION:' + tx(e.description), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar;charset=utf-8' }));
+    a.download = 'grah-' + String(e.title || 'evenement').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) + '.ics';
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  };
+
   /* Signature au doigt, au stylet ou à la souris. pad.isEmpty(), pad.clear(), pad.toDataURL() */
   G.pad = function (canvas) {
     var ctx = canvas.getContext('2d'), drawing = false, strokes = 0, last = null;

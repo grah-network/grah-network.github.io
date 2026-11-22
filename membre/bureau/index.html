@@ -92,6 +92,7 @@ table.t th { font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em
     <p class="lead">Demandes des membres, assemblées générales, artistes, formulaires et conventions. Chaque action envoie automatiquement les e-mails prévus.</p>
     <nav class="tabs" id="tabs">
       <button data-tab="demandes" class="on">Demandes<span class="n" id="n-demandes" hidden></span></button>
+      <button data-tab="evenements">Événements</button>
       <button data-tab="ag">Assemblées</button>
       <button data-tab="artistes">Artistes<span class="n" id="n-artistes" hidden></span></button>
       <button data-tab="formulaires">Formulaires<span class="n" id="n-formulaires" hidden></span></button>
@@ -100,6 +101,35 @@ table.t th { font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em
     </nav>
 
     <section data-panel="demandes"><div id="req-list"></div></section>
+
+    <section data-panel="evenements" hidden>
+      <h2>Préparer un événement</h2>
+      <div class="box">
+        <input type="hidden" id="ev-id">
+        <div class="field"><label for="ev-title">Titre</label><input class="input" id="ev-title" maxlength="140" placeholder="Atelier pancartes"></div>
+        <div class="grid3">
+          <div class="field"><label for="ev-start">Début</label><input class="input" type="datetime-local" id="ev-start"></div>
+          <div class="field"><label for="ev-end">Fin <span style="font-weight:400;color:var(--grey)">(facultatif)</span></label><input class="input" type="datetime-local" id="ev-end"></div>
+          <div class="field"><label for="ev-replyby">Répondre avant <span style="font-weight:400;color:var(--grey)">(facultatif)</span></label><input class="input" type="datetime-local" id="ev-replyby"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="ev-place">Lieu</label><input class="input" id="ev-place" maxlength="300" value="Atelier GRAH, 10 Place Avogadro, 30900 Nîmes"></div>
+          <div class="grid2" style="gap:12px">
+            <div class="field"><label for="ev-cap">Places <span style="font-weight:400;color:var(--grey)">(vide = sans limite)</span></label><input class="input" type="number" min="1" id="ev-cap"></div>
+            <div class="field"><label for="ev-aud">Invité·es</label><select class="input" id="ev-aud"><option value="tous">Tous les membres à jour</option><option value="actifs">Membres actifs seulement</option></select></div>
+          </div>
+        </div>
+        <div class="field"><label for="ev-desc">Présentation</label><textarea class="input" id="ev-desc" maxlength="4000" placeholder="Ce que l'on fera, ce qu'il faut apporter…"></textarea></div>
+        <div class="field"><span class="label">Image <span style="font-weight:400;color:var(--grey)">(affiche ou photo, en haut de l'invitation)</span></span>
+          <div class="art" style="align-items:center"><div id="ev-thumb"></div><div><button class="link" id="ev-img-btn">Choisir une image</button> <button class="link" id="ev-img-del" hidden>Retirer</button><input type="file" id="ev-img" accept="image/*" hidden></div></div></div>
+        <div class="btns"><button class="btn yellow" id="ev-save"><span>Enregistrer le brouillon</span></button><button class="link" id="ev-reset">Nouvel événement</button></div>
+        <p class="note">Un brouillon n'est visible que par le bureau (onglet « Vie de l'asso » de l'espace membre). Envoyez-vous un e-mail test, puis publiez : seul·es les membres à jour de cotisation sont invité·es. Un rappel part automatiquement 2 jours avant aux personnes inscrites.</p>
+        <p class="err" id="ev-err"></p>
+      </div>
+      <h2>Événements</h2>
+      <div id="ev-list"></div>
+      <div id="ev-detail"></div>
+    </section>
 
     <section data-panel="ag" hidden>
       <h2>Préparer une assemblée</h2>
@@ -191,7 +221,7 @@ function mountPad(id) { pads[id] = GRAH.pad($(id)); document.querySelector(`[dat
 
 /* ── onglets ── */
 const loaded = {};
-const LOAD = { demandes: loadRequests, ag: loadAg, artistes: loadArtists, formulaires: loadForms, conventions: loadConventions, textes: loadText };
+const LOAD = { demandes: loadRequests, evenements: loadEvents, ag: loadAg, artistes: loadArtists, formulaires: loadForms, conventions: loadConventions, textes: loadText };
 function openTab(t) {
   if (!LOAD[t]) t = 'demandes';
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
@@ -427,6 +457,128 @@ $('tx-save').onclick = async () => {
   if (!confirm('Enregistrer ce texte ? Il servira pour les prochains documents.')) return;
   try { await rpc('set_doc_text', { p_key: $('tx-key').value, p_title: $('tx-title').value, p_body: $('tx-body').value }); toast('Texte enregistré'); loadText(); } catch (e) { toast(e.message, 4000); }
 };
+
+/* ── événements ── */
+const ES = { brouillon: ['Brouillon', 'p'], publie: ['Publié', 'a'], annule: ['Annulé', 'g'] };
+let evs = [], evImage = '';
+const dtIn = iso => iso ? localInput(iso) : '';
+const dtOut = v => v ? new Date(v).toISOString() : '';
+function evThumb() {
+  $('ev-thumb').innerHTML = evImage ? `<img src="${esc(GRAH.evImg(evImage))}" alt="" style="width:120px;height:auto;border:2px solid var(--ink);border-radius:8px;display:block">` : '';
+  $('ev-img-del').hidden = !evImage;
+}
+function evForm(e) {
+  $('ev-id').value = e ? e.id : ''; $('ev-title').value = e ? e.title : ''; $('ev-start').value = e ? dtIn(e.starts_at) : '';
+  $('ev-end').value = e ? dtIn(e.ends_at) : ''; $('ev-replyby').value = e ? dtIn(e.reply_by) : '';
+  $('ev-place').value = e ? e.place : 'Atelier GRAH, 10 Place Avogadro, 30900 Nîmes'; $('ev-cap').value = e && e.capacity ? e.capacity : '';
+  $('ev-aud').value = e ? e.audience : 'tous'; $('ev-desc').value = e ? e.description : '';
+  evImage = e ? e.image : ''; evThumb();
+  $('ev-save').querySelector('span').textContent = !e ? 'Enregistrer le brouillon' : e.status === 'publie' ? 'Enregistrer les changements' : 'Enregistrer le brouillon';
+  $('ev-err').textContent = '';
+}
+$('ev-reset').onclick = () => evForm(null);
+$('ev-img-btn').onclick = () => $('ev-img').click();
+$('ev-img-del').onclick = () => { evImage = ''; evThumb(); };
+$('ev-img').onchange = async () => {
+  const f = $('ev-img').files[0]; $('ev-img').value = ''; if (!f) return;
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(f); });
+    const W = Math.min(1200, img.width), H = Math.round(img.height * W / img.width), cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    cv.getContext('2d').drawImage(img, 0, 0, W, H);
+    const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.85));
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+    const up = await sb.storage.from('evenements').upload(path, blob, { contentType: 'image/jpeg' });
+    if (up.error) throw up.error;
+    evImage = path; evThumb(); toast('Image ajoutée — pensez à enregistrer');
+  } catch (e) { toast('Image impossible : ' + (e.message || e), 5000); }
+};
+$('ev-save').onclick = async () => {
+  $('ev-err').textContent = '';
+  if ($('ev-title').value.trim().length < 2) { $('ev-err').textContent = 'Indiquez un titre.'; return; }
+  if (!$('ev-start').value) { $('ev-err').textContent = 'Indiquez la date et l’heure de début.'; return; }
+  if ($('ev-end').value && $('ev-end').value < $('ev-start').value) { $('ev-err').textContent = 'La fin est avant le début.'; return; }
+  try {
+    const r = await rpc('save_event', { p: { id: $('ev-id').value, title: $('ev-title').value, starts_at: dtOut($('ev-start').value), ends_at: dtOut($('ev-end').value),
+      reply_by: dtOut($('ev-replyby').value), place: $('ev-place').value, capacity: $('ev-cap').value, audience: $('ev-aud').value, description: $('ev-desc').value, image: evImage } });
+    if (r.event.status === 'publie') await notify('event_promoted', r.event.id);   // la jauge a pu augmenter
+    if (r.changed && confirm('La date, l’horaire ou le lieu ont changé. Prévenir les invité·es par e-mail ?')) {
+      await rpc('bump_event_change', { p_id: r.event.id });
+      const n = await notify('event_change', r.event.id);
+      toast(`${n} e-mail(s) de changement envoyé(s)`, 4000);
+    } else toast('Enregistré');
+    evForm(null); loadEvents();
+  } catch (e) { $('ev-err').textContent = e.message; }
+};
+async function loadEvents() {
+  evs = await rpc('bureau_events');
+  $('ev-list').innerHTML = evs.length ? evs.map(e => {
+    const c = e.counts || {}, past = new Date(e.starts_at) < new Date();
+    return `<div class="item ${e.status === 'publie' && !past ? '' : 'done'}" data-id="${e.id}">
+      <div class="art">${e.image ? `<img src="${esc(GRAH.evImg(e.image))}" alt="">` : ''}<div style="flex:1">
+      <div class="row"><div><b>${esc(e.title)}</b><div>${esc(GRAH.evWhen(e))}</div><div class="sub">${esc(e.place)} · ${e.audience === 'actifs' ? 'membres actifs' : 'tous les membres à jour'}${e.capacity ? ' · ' + e.capacity + ' places' : ''}</div></div>
+        <span class="badge ${ES[e.status][1]}">${past && e.status === 'publie' ? 'Passé' : ES[e.status][0]}</span></div>
+      ${e.status !== 'brouillon' ? `<div class="stats"><div class="stat"><b>${c.confirmes || 0}${e.capacity ? ' / ' + e.capacity : ''}</b><span>inscrit·es</span></div><div class="stat"><b>${c.attente || 0}</b><span>liste d'attente</span></div><div class="stat"><b>${c.peutetre || 0}</b><span>peut-être</span></div><div class="stat"><b>${c.non || 0}</b><span>ne viennent pas</span></div><div class="stat"><b>${c.sans_reponse || 0}</b><span>sans réponse</span></div></div>` : ''}
+      <div class="btns">
+        ${e.status !== 'annule' && !past ? '<button class="link" data-edit>Modifier</button>' : ''}
+        ${e.status === 'brouillon' ? '<button class="link" data-test>M’envoyer un e-mail test</button><a class="link" href="../#evenements" target="_blank">Voir dans l’espace membre</a><button class="btn yellow" data-publish><span>Publier et envoyer aux membres</span></button><button class="link" data-del>Supprimer</button>' : ''}
+        ${e.status === 'publie' && !past ? '<button class="link" data-invite>Inviter les nouveaux membres</button>' : ''}
+        ${e.status !== 'brouillon' ? '<button class="link" data-detail>Réponses et liste de présence</button>' : ''}
+        ${e.status === 'publie' && !past ? '<button class="link" data-cancel>Annuler l’événement</button>' : ''}
+      </div></div></div></div>`;
+  }).join('') : '<p class="note">Aucun événement.</p>';
+  $('ev-list').querySelectorAll('[data-id]').forEach(box => {
+    const e = evs.find(x => x.id === box.dataset.id);
+    const on = (sel, fn) => box.querySelector(sel)?.addEventListener('click', fn);
+    on('[data-edit]', () => { evForm(e); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    on('[data-test]', async () => {
+      try { await rpc('event_test_invite', { p_event: e.id }); const n = await notify('event_test', e.id); toast(n ? 'E-mail test envoyé à votre adresse' : 'E-mail test non envoyé', 4000); }
+      catch (err) { toast(err.message, 5000); }
+    });
+    on('[data-publish]', async () => {
+      if (!confirm(`Publier « ${e.title} » et envoyer l’invitation aux ${e.audience === 'actifs' ? 'membres actifs' : 'membres'} à jour de cotisation ?\n\nVos réponses de test seront effacées.`)) return;
+      try { const r = await rpc('publish_event', { p_id: e.id }); const n = await notify('event', e.id); toast(`${r.invited} membres invités · ${n} e-mail(s) envoyé(s)`, 5000); loadEvents(); }
+      catch (err) { toast(err.message, 5000); }
+    });
+    on('[data-invite]', async () => {
+      try { const r = await rpc('publish_event', { p_id: e.id }); const n = await notify('event', e.id); toast(`${n} nouvelle(s) invitation(s) envoyée(s) · ${r.invited} invité·es au total`, 5000); loadEvents(); }
+      catch (err) { toast(err.message, 5000); }
+    });
+    on('[data-del]', async () => {
+      if (!confirm('Supprimer ce brouillon ?')) return;
+      try { await rpc('delete_event_draft', { p_id: e.id }); loadEvents(); } catch (err) { toast(err.message, 5000); }
+    });
+    on('[data-cancel]', async () => {
+      if (!confirm(`Annuler « ${e.title} » ? Les personnes inscrites ou « peut-être » seront prévenues par e-mail.`)) return;
+      try { await rpc('cancel_event', { p_id: e.id }); const n = await notify('event_cancel', e.id); toast(`Événement annulé · ${n} e-mail(s) envoyé(s)`, 5000); loadEvents(); }
+      catch (err) { toast(err.message, 5000); }
+    });
+    on('[data-detail]', () => showEventDetail(e.id));
+  });
+}
+const EA = { oui: 'Vient', non: 'Ne vient pas', peutetre: 'Peut-être', '': '—' };
+async function showEventDetail(id) {
+  const d = await rpc('event_detail', { p_id: id }), e = d.event, inv = d.invites;
+  let q = 0;
+  const label = i => i.place === 'confirme' ? 'Inscrit·e' : i.place === 'attente' ? `Liste d'attente n° ${++q}` : EA[i.answer];
+  const rows = inv.map(i => ({ ...i, label: label(i) }));
+  $('ev-detail').innerHTML = `<h2>Réponses — ${esc(e.title)}</h2>
+    <div class="btns"><button class="btn" id="ev-print"><span>Imprimer la liste de présence</span></button></div>
+    <div class="tablewrap"><table class="t"><thead><tr><th>Membre</th><th>N°</th><th>Catégorie</th><th>Réponse</th><th>Date de réponse</th></tr></thead><tbody>
+    ${rows.map(i => `<tr><td>${esc(i.name)}</td><td>${esc(i.member_no || '')}</td><td>${esc(CAT[i.category] || '')}</td><td>${esc(i.label)}</td><td>${i.answered_at ? esc(fd(i.answered_at)) : ''}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  $('ev-detail').scrollIntoView({ behavior: 'smooth' });
+  $('ev-print').onclick = () => {
+    const list = rows.filter(i => i.place === 'confirme' || i.place === 'attente' || i.answer === 'peutetre');
+    GRAH.printDoc({
+      title: 'Liste de présence — ' + e.title, subtitle: GRAH.evWhen(e) + ' · ' + e.place,
+      meta: [['Inscrit·es', String(rows.filter(i => i.place === 'confirme').length) + (e.capacity ? ' / ' + e.capacity : '')], ['Liste d’attente', String(rows.filter(i => i.place === 'attente').length)], ['Peut-être', String(rows.filter(i => i.answer === 'peutetre').length)]],
+      extra: '<table><thead><tr><th style="width:auto">Membre</th><th style="width:auto">N°</th><th style="width:auto">Réponse</th><th>Signature</th></tr></thead><tbody>' +
+        list.map(i => `<tr><td>${esc(i.name)}</td><td>${esc(i.member_no || '')}</td><td>${esc(i.label)}</td><td style="height:24pt;width:35%"></td></tr>`).join('') +
+        '<tr><td colspan="4" style="height:24pt"></td></tr><tr><td colspan="4" style="height:24pt"></td></tr></tbody></table>',
+      foot: 'Liste réservée au bureau : elle contient des données personnelles des membres.'
+    });
+  };
+}
 
 /* ── démarrage ── */
 (async () => {

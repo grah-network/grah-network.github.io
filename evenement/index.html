@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Événement — GRAH!</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../favicon.png">
+<style>
+@font-face { font-family: 'Archivo'; font-weight: 400; font-display: swap; src: url(../fonts/archivo-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 700; font-display: swap; src: url(../fonts/archivo-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Archivo'; font-weight: 800; font-display: swap; src: url(../fonts/archivo-latin-800-normal.woff2) format('woff2'); }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --ink: #000; --paper: #fff; --soft: #F2F2F0; --grey: #5E5E5B; --hair: #D6D6D2; --yellow: #FFE800; --pink: #FF48B0; --aqua: #5EC8E5; --danger: #C8102E; --r: 10px; }
+[hidden] { display: none !important; }
+body { background: var(--paper); color: var(--ink); font-family: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.wrap { max-width: 640px; margin: 0 auto; padding: 0 16px calc(48px + env(safe-area-inset-bottom)); }
+.top { display: flex; align-items: center; justify-content: space-between; padding: max(14px, env(safe-area-inset-top)) 0 14px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; font-size: 14px; font-weight: 700; }
+.top .logo { height: 32px; width: auto; display: block; }
+h1 { font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+h2 { font-size: 18px; font-weight: 800; margin: 26px 0 10px; }
+.lead { color: var(--grey); margin-bottom: 18px; }
+.field { margin-bottom: 14px; }
+.field > label, .label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.field small { display: block; font-size: 13px; color: var(--grey); margin-top: 4px; }
+.opt { font-weight: 400; color: var(--grey); }
+.input { width: 100%; font: inherit; font-size: 17px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--paper); color: var(--ink); }
+textarea.input { min-height: 90px; resize: vertical; line-height: 1.45; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choices { display: grid; gap: 10px; }
+.choice { display: flex; gap: 12px; align-items: flex-start; border: 2px solid var(--ink); border-radius: var(--r); padding: 11px 14px; cursor: pointer; }
+.choice input { margin-top: 4px; width: 18px; height: 18px; accent-color: #000; flex-shrink: 0; }
+.choice b { display: block; }
+.choice span { font-size: 14px; color: var(--grey); }
+.choice:has(input:checked) { background: var(--yellow); }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; margin-bottom: 12px; }
+.check input { margin-top: 3px; width: 18px; height: 18px; accent-color: #000; flex-shrink: 0; }
+.btn { display: block; width: 100%; text-align: center; text-decoration: none; font: inherit; font-weight: 800; font-size: 17px; padding: 14px 20px; border: 2.5px solid var(--ink); border-radius: 6px; background: var(--yellow); color: var(--ink); cursor: pointer; transform: skewX(-9deg); margin-top: 6px; }
+.btn > span { display: inline-block; transform: skewX(9deg); }
+.btn.ghost { background: var(--paper); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn { transition: transform .12s, box-shadow .12s; }
+.btn:not(:disabled):hover { box-shadow: 4px 4px 0 var(--ink); transform: skewX(-9deg) translate(-2px,-2px); }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+.link { background: none; border: none; font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; color: inherit; padding: 4px; }
+.err { color: var(--danger); font-size: 14px; margin-top: 10px; min-height: 1.2em; font-weight: 700; }
+.note { font-size: 14px; color: var(--grey); margin-top: 8px; }
+.box { border: 2px solid var(--ink); border-radius: var(--r); padding: 16px; margin-top: 8px; }
+.box.soft { border: none; background: var(--soft); }
+.doctext { white-space: pre-wrap; font-size: 14px; line-height: 1.5; background: var(--soft); border-radius: var(--r); padding: 14px; max-height: 320px; overflow-y: auto; margin: 8px 0 14px; }
+.padbox { border: 2px dashed var(--ink); border-radius: var(--r); background: var(--paper); position: relative; }
+.padbox canvas { display: block; width: 100%; height: 160px; cursor: crosshair; }
+.padbox .hint { position: absolute; left: 12px; bottom: 8px; font-size: 12px; color: var(--grey); pointer-events: none; }
+.padbox .clear { position: absolute; right: 6px; top: 4px; font-size: 13px; }
+.mark { background-image: linear-gradient(transparent 55%, var(--yellow) 55%, var(--yellow) 92%, transparent 92%); }
+@media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
+</style>
+<script src="../membre/ui.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><a href="../" aria-label="GRAH! — site de l'association"><svg class="logo" viewBox="46 44 931 429" role="img" aria-label="GRAH!"><path fill-rule="evenodd" fill="currentColor" d="M172.7 466.6C204.3 458.7 236.6 440.2 267.9 412.2C273.9 406.7 275.1 406.1 275.6 407.7C277.7 414.2 283.7 424.4 288.5 429.7C294.5 436.4 300.4 441.0 309.1 445.9L314.8 449.1L326.0 433.4C332.1 424.7 337.4 417.1 337.6 416.5C337.9 415.9 334.6 413.3 330.3 410.8C316.9 402.8 314.0 398.2 314.0 384.9C314.0 370.2 318.6 356.1 334.1 323.9C340.1 311.5 344.4 301.2 345.0 297.8C346.1 291.9 345.2 285.2 342.5 280.1C340.5 276.1 333.8 270.4 329.4 268.9C323.0 266.6 307.6 267.4 287.5 270.8C250.1 277.3 239.7 278.3 209.5 278.5L181.5 278.7L180.9 289.1C180.5 294.8 180.2 303.8 180.1 309.2L180.0 318.8L190.8 319.5C212.6 321.0 246.4 318.9 276.8 314.1L288.1 312.3L287.5 314.9C287.2 316.3 284.3 322.9 281.0 329.5C258.5 374.8 202.0 419.9 157.5 428.1C154.2 428.7 147.0 429.0 141.5 428.8C127.5 428.3 120.9 425.1 109.0 413.2C94.8 399.0 90.3 387.7 91.3 368.5C92.2 350.1 98.8 330.5 114.5 299.0C147.0 234.0 196.5 171.4 247.5 130.6C268.0 114.3 294.0 99.3 313.1 92.9C328.8 87.6 342.7 88.9 352.8 96.6C358.4 100.9 362.5 111.1 365.4 127.9C366.2 132.4 367.1 136.4 367.3 136.6C367.6 136.9 376.2 135.9 386.5 134.5C396.8 133.1 405.4 132.0 405.6 132.0C406.5 132.0 405.9 121.6 404.5 114.3C399.2 86.3 386.6 67.3 366.9 57.6C338.4 43.6 311.5 46.0 272.7 66.0C232.8 86.5 195.4 117.5 157.6 161.5C106.7 220.7 64.1 295.9 52.8 346.2C49.5 361.0 49.5 384.7 52.9 397.0C57.7 414.8 66.6 429.5 80.8 443.2C93.6 455.5 103.1 461.7 116.0 465.8C126.8 469.3 131.8 469.9 147.5 469.5C159.4 469.2 164.6 468.6 172.7 466.6ZM492.3 385.3C499.9 379.1 506.6 374.0 507.1 374.0C507.6 374.0 508.0 375.1 508.0 376.4C508.0 378.6 508.5 378.9 513.2 379.4C516.1 379.8 524.4 380.1 531.5 380.3L544.5 380.5L545.2 362.0C546.2 333.9 550.5 293.6 553.0 289.0C553.5 288.0 562.8 285.3 579.7 281.1C593.9 277.6 606.4 274.4 607.4 274.2C609.2 273.7 609.3 274.2 608.7 285.6C607.9 299.4 609.3 325.7 611.5 338.0C613.1 347.1 616.9 359.0 618.1 359.0C619.6 359.0 653.5 346.8 654.4 345.9C654.9 345.4 654.6 342.7 653.7 339.3C650.0 326.3 649.9 320.2 649.9 210.5C650.0 142.7 649.7 100.3 649.0 96.5C647.1 85.2 639.2 78.0 628.6 78.0C618.9 78.0 613.3 82.6 594.4 106.5C575.6 130.3 558.4 157.5 543.3 187.5C538.1 197.9 534.1 205.6 534.4 204.5C540.0 188.5 540.0 166.3 534.6 144.7C525.5 109.0 499.5 84.3 463.1 76.8C452.3 74.6 446.0 74.9 439.8 78.1C434.3 80.9 430.6 86.7 426.6 98.8C417.8 125.4 386.8 228.5 374.6 271.5C372.1 280.3 366.7 298.1 362.5 311.0C353.8 338.0 350.5 349.9 348.5 362.5C346.9 372.2 346.5 388.7 347.9 390.8C348.5 391.9 352.1 391.8 367.5 390.5C377.9 389.6 386.5 388.8 386.7 388.7C386.8 388.5 387.4 383.4 388.0 377.3C388.5 371.2 390.1 361.8 391.5 356.4C394.4 345.1 404.8 311.9 405.9 310.8C406.2 310.4 408.4 312.4 410.7 315.3C413.0 318.1 420.6 326.6 427.6 334.0C447.0 354.6 459.3 370.4 467.5 385.5C471.9 393.6 475.8 398.2 477.4 397.3C478.0 396.9 484.7 391.5 492.3 385.3ZM872.0 366.2C873.9 359.8 875.5 351.5 875.8 347.9L876.2 341.3L857.4 339.8C841.4 338.6 838.3 338.5 837.4 339.7C834.8 342.8 828.4 373.6 830.2 374.1C832.4 374.6 860.7 377.8 864.1 377.9L868.8 378.0L872.0 366.2ZM776.8 373.0C790.6 370.4 794.0 369.4 794.0 368.1C794.0 367.2 793.3 362.7 792.5 358.0C788.3 335.0 786.9 321.5 786.3 301.5C785.4 265.9 789.6 219.3 794.5 212.0C799.1 205.3 800.1 199.5 797.9 193.1C797.0 190.5 797.4 187.1 800.5 172.7C804.7 153.0 813.7 116.3 818.1 101.3C819.7 95.7 821.3 89.1 821.6 86.7C822.2 82.3 822.2 82.3 818.9 81.7C816.4 81.2 792.2 79.8 782.6 79.5C782.1 79.5 780.8 82.4 779.8 86.0C775.6 100.6 763.9 147.6 760.6 164.0C758.6 173.6 756.8 181.5 756.7 181.6C756.6 181.6 751.5 182.9 745.5 184.4C739.5 185.9 729.2 188.7 722.7 190.7C716.3 192.7 710.7 194.0 710.4 193.7C709.5 192.9 718.9 146.6 725.0 121.0C727.8 109.7 730.0 98.8 730.0 96.8C730.0 93.2 729.8 93.0 727.0 93.0C721.9 93.0 689.6 97.1 688.9 97.8C687.1 99.7 674.1 159.9 670.0 185.5C660.3 245.4 661.8 306.9 673.9 339.2C677.4 348.3 676.8 348.3 696.0 339.5C709.4 333.3 713.0 331.2 713.0 329.7C713.0 328.7 712.1 324.8 711.0 321.2C706.3 305.4 703.5 273.1 704.8 250.5L705.5 239.5L715.0 236.2C729.9 231.0 748.0 225.7 748.7 226.3C749.0 226.6 748.4 234.0 747.4 242.7C745.1 262.5 744.8 316.1 746.8 331.0C748.8 345.5 753.9 375.1 754.6 376.2C754.9 376.7 756.2 376.9 757.4 376.7C758.5 376.4 767.3 374.7 776.8 373.0ZM500.0 359.8C491.6 345.2 476.6 326.3 455.3 303.7C447.6 295.5 439.8 286.3 438.0 283.3C433.9 276.6 433.3 277.2 450.0 269.3C496.1 247.3 505.0 242.0 517.5 229.4C521.5 225.5 526.7 219.1 529.0 215.3C531.3 211.6 532.9 209.4 532.5 210.5C532.0 211.6 530.2 216.5 528.3 221.3C521.2 239.8 513.6 271.1 509.6 299.0C507.8 310.8 505.4 336.6 504.2 354.2L503.5 365.9L500.0 359.8ZM879.2 299.3L888.9 298.7L890.0 293.1C898.3 251.2 924.7 181.8 963.1 100.7C969.1 88.0 974.0 77.0 974.0 76.4C974.0 75.7 970.0 74.3 964.2 73.0C958.9 71.8 950.0 69.7 944.5 68.5C939.0 67.2 934.5 66.2 934.4 66.3C931.6 69.7 902.5 133.8 889.1 166.2C867.3 218.8 849.0 277.5 849.0 295.0L849.0 300.0L859.2 300.0C864.9 300.0 873.9 299.7 879.2 299.3ZM564.5 240.8C565.6 237.2 572.3 221.5 576.9 211.7C583.7 197.1 603.6 162.5 607.7 158.0C608.8 156.8 609.0 162.7 609.0 194.2L609.0 231.8L588.2 236.9C576.8 239.8 566.7 242.3 565.7 242.6C564.1 243.1 563.9 242.8 564.5 240.8ZM428.3 232.8C428.5 232.1 431.3 222.9 434.4 212.5C445.6 175.4 462.2 121.5 462.9 120.2C464.0 118.2 475.3 124.4 481.5 130.4C491.9 140.6 497.2 155.6 497.4 175.5C497.5 186.0 497.2 188.0 495.3 191.6C489.4 202.8 477.5 211.2 449.5 224.2C429.8 233.3 427.7 234.2 428.3 232.8Z"/></svg></a><a href="../#contact">Contact</a></header>
+  <style>
+  .cover { border: 2px solid var(--ink); border-radius: var(--r); overflow: hidden; margin-bottom: 16px; }
+  .cover img { display: block; width: 100%; height: auto; }
+  .when { border: 2px solid var(--ink); border-radius: var(--r); padding: 12px 14px; margin: 12px 0 16px; }
+  .when b { display: block; font-size: 17px; }
+  .desc { white-space: pre-wrap; margin-bottom: 14px; }
+  .meta { font-size: 14px; color: var(--grey); margin-bottom: 18px; }
+  .badge { display: inline-block; font-size: 13px; font-weight: 800; padding: 2px 10px; border: 2px solid var(--ink); border-radius: 999px; background: var(--soft); }
+  .badge.y { background: var(--yellow); } .badge.a { background: var(--aqua); } .badge.p { background: var(--pink); } .badge.g { color: var(--grey); border-color: var(--hair); }
+  .choice.off { opacity: .45; pointer-events: none; }
+  .ok { font-weight: 700; margin-top: 10px; min-height: 1.2em; }
+  </style>
+  <div id="load"><p class="lead">Chargement…</p></div>
+  <div id="bad" hidden><h1>Lien expiré ou invalide</h1><p class="lead">Ce lien ne correspond à aucune invitation. Vous pouvez répondre depuis votre espace membre.</p><a class="btn" href="../membre/#vie"><span>Mon espace membre</span></a></div>
+  <div id="ev" hidden>
+    <div class="cover" id="ev-cover" hidden><img id="ev-img" alt=""></div>
+    <p id="ev-hello" class="lead" style="margin-bottom:6px"></p>
+    <h1 id="ev-title"></h1>
+    <div class="when"><b id="ev-when"></b><span id="ev-place"></span></div>
+    <div class="desc" id="ev-desc"></div>
+    <p class="meta" id="ev-meta"></p>
+    <div id="ev-closed" hidden><p class="lead" id="ev-closed-msg"></p></div>
+    <div id="ev-form">
+      <p style="margin-bottom:10px">Votre réponse actuelle : <span class="badge" id="ev-state"></span></p>
+      <div class="choices">
+        <label class="choice" data-c="oui"><input type="radio" name="ans" value="oui"><div><b>Je viens</b></div></label>
+        <label class="choice" data-c="peutetre"><input type="radio" name="ans" value="peutetre"><div><b>Peut-être</b></div></label>
+        <label class="choice" data-c="non"><input type="radio" name="ans" value="non"><div><b>Je ne viens pas</b></div></label>
+      </div>
+      <button class="btn" id="ev-send" style="margin-top:14px"><span>Confirmer ma réponse</span></button>
+      <p class="ok" id="ev-ok" role="status"></p>
+      <p class="err" id="ev-err" role="alert"></p>
+    </div>
+    <p style="margin-top:16px;display:flex;gap:18px;flex-wrap:wrap"><button class="link" id="ev-ics">Ajouter à mon agenda</button><a class="link" href="../membre/#vie">Mon espace membre</a></p>
+  </div>
+</div>
+<script>
+const SB_URL = 'https://gxwnkhebrgqscyiqymud.supabase.co', SB_KEY = 'sb_publishable_rWzYzPhQ-8dvxPRfqeCO8g_rH5mj1xe';
+const $ = id => document.getElementById(id);
+async function rpc(fn, args) {
+  const r = await fetch(SB_URL + '/rest/v1/rpc/' + fn, { method: 'POST', headers: { apikey: SB_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(args || {}) });
+  const d = await r.json().catch(() => null);
+  if (!r.ok) throw new Error((d && (d.message || d.error)) || ('HTTP ' + r.status));
+  return d;
+}
+const notify = (type, id) => fetch(SB_URL + '/functions/v1/grah', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'notify', type, id }) }).catch(() => {});
+const q = new URLSearchParams(location.search), token = q.get('t') || '';
+let ev = null;
+function render(msg) {
+  $('load').hidden = true; $('ev').hidden = false;
+  const img = GRAH.evImg(ev.image);
+  $('ev-cover').hidden = !img; if (img) $('ev-img').src = img;
+  $('ev-hello').textContent = ev.first_name ? 'Bonjour ' + ev.first_name + ',' : '';
+  $('ev-title').textContent = ev.title;
+  $('ev-when').textContent = GRAH.evWhen(ev);
+  $('ev-place').textContent = ev.place || 'Lieu précisé prochainement';
+  $('ev-desc').textContent = ev.description || '';
+  $('ev-meta').textContent = GRAH.evCounts(ev) + (ev.reply_by ? ' · réponse souhaitée avant le ' + GRAH.fmtDate(ev.reply_by) : '');
+  const st = GRAH.evState(ev); $('ev-state').textContent = st[0]; $('ev-state').className = 'badge ' + st[1];
+  const started = new Date(ev.starts_at) < new Date(), closed = ev.reply_by && new Date(ev.reply_by) < new Date();
+  if (ev.status === 'annule' || started) {
+    $('ev-form').hidden = true; $('ev-closed').hidden = false;
+    $('ev-closed-msg').textContent = ev.status === 'annule' ? 'Cet événement est annulé.' : 'Cet événement a déjà commencé.';
+    $('ev-ics').hidden = ev.status === 'annule';
+    return;
+  }
+  document.querySelectorAll('.choice').forEach(c => c.classList.toggle('off', closed && c.dataset.c !== 'non'));
+  if (msg) $('ev-ok').textContent = msg;
+}
+(async () => {
+  if (token.length < 40) { $('load').hidden = true; $('bad').hidden = false; return; }
+  try { ev = await rpc('event_by_token', { p_token: token }); } catch (e) { ev = null; }
+  if (!ev) { $('load').hidden = true; $('bad').hidden = false; return; }
+  document.title = ev.title + ' — GRAH!';
+  render();
+  // le bouton cliqué dans l'e-mail est présélectionné ; rien n'est enregistré avant « Confirmer »
+  const r = q.get('r'), cur = ev.answer;
+  const pre = ['oui', 'non', 'peutetre'].includes(r) ? r : cur;
+  const radio = pre && document.querySelector('input[name=ans][value=' + pre + ']');
+  if (radio && !radio.closest('.off')) radio.checked = true;
+  if (r && r !== cur && radio && !radio.closest('.off')) $('ev-ok').textContent = 'Appuyez sur « Confirmer ma réponse » pour l’enregistrer.';
+})();
+$('ev-send').onclick = async () => {
+  const v = document.querySelector('input[name=ans]:checked')?.value;
+  $('ev-err').textContent = ''; $('ev-ok').textContent = '';
+  if (!v) { $('ev-err').textContent = 'Choisissez une réponse.'; return; }
+  const wasIn = ev.my_place === 'confirme';
+  $('ev-send').disabled = true;
+  try {
+    ev = await rpc('answer_event_token', { p_token: token, p_answer: v });
+    if (wasIn && ev.my_place !== 'confirme') notify('event_promoted', ev.id);
+    render(ev.my_place === 'attente' ? 'C’est complet pour le moment : vous êtes sur la liste d’attente. Nous vous écrirons si une place se libère.'
+         : v === 'oui' ? 'C’est noté, à bientôt !' : v === 'peutetre' ? 'C’est noté. Revenez confirmer quand vous saurez.' : 'C’est noté. Merci de nous avoir prévenu·es.');
+  } catch (e) { $('ev-err').textContent = e.message.replace(/^.*?: /, ''); }
+  $('ev-send').disabled = false;
+};
+$('ev-ics').onclick = () => GRAH.ics(ev);
+</script>
+</body>
+</html>
