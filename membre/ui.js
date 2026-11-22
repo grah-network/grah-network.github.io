@@ -63,7 +63,7 @@
       '.sig{flex:1;min-width:200pt;border:1pt solid #000;border-radius:4pt;padding:8pt}.sig .l{font-weight:700}.sig img{display:block;max-width:100%;height:70pt;object-fit:contain;margin:4pt 0}' +
       '.sig .empty{height:70pt}.sig .d{font-size:9pt;color:#444}.foot{margin-top:16pt;font-size:8pt;color:#666;border-top:.5pt solid #bbb;padding-top:4pt}' +
       'ul{margin:4pt 0 12pt;padding-left:16pt}</style></head><body>' +
-      '<div class="h"><b>GRAH!</b><span>Groupe de Recherche artistique et d’Action sur l’Hospitalité<br>Association loi 1901 · RNA W302023215 · SIRET 103 759 312 00012<br>10 Place Avogadro, 30900 Nîmes · contact@grah-network.com</span></div>' +
+      '<div class="h"><b>GRAH!</b><span>Groupe de Recherche artistique et d’Action sur l’Hospitalité<br>Association loi 1901 · RNA W302023215 · SIRET 103 759 312 00020<br>10 Place Avogadro, 30900 Nîmes · contact@grah-network.com</span></div>' +
       '<h1>' + e(o.title) + '</h1>' + (o.subtitle ? '<p class="sub">' + e(o.subtitle) + '</p>' : '') +
       (meta ? '<table>' + meta + '</table>' : '') + (o.extra || '') +
       (o.body ? '<div class="body">' + e(o.body) + '</div>' : '') +
